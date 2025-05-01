@@ -3,7 +3,7 @@ title: "Развертывание блога на GitHub Pages с темой Ch
 layout: post
 date: 2025-04-30 12:00:00 +0300
 categories: [GitHub, Блог]
-tags: [jekyll, github-pages, chirpy, ruby, deploy]
+tags: [jekyll, github-pages, chirpy, ruby, deploy, dns, ssl, github-actions]
 ---
 
 В этой статье рассмотрим, как развернуть персональный блог, например `abykov.dev`, на GitHub Pages с использованием
@@ -261,3 +261,18 @@ https://username.github.io
 Это упрощает работу и позволяет не выполнять сборку вручную.
 > ⚠️ Обычно в репозитории Chirpy уже настроен файл ```.github/workflows/pages-deploy.yml```, который отвечает 
 > за сборку и деплой.
+
+### Проверка статуса сборки
+
+После каждого коммита GitHub запускает GitHub Actions. В списке коммитов отображается статус:
+
+- success - сборка и деплой прошли успешно.
+- failure - ошибка сборки или деплоя. Нужно открыть вкладку Actions и посмотреть логи.
+- in progress - сборка выполняется.
+
+![Создание сайта www.abykov.dev](/assets/img/www-gp-success-status.png){: .shadow .rounded }
+
+Чтобы увидеть детали, нужно перейти на вкладку Actions, кликнуть на последнем workflow run, посмотреть
+логи build и deploy.
+> ⚠️ Иногда может появиться статус Cancelled - это не всегда ошибка. Например, если новая сборка была запущена 
+> до завершения предыдущей.
