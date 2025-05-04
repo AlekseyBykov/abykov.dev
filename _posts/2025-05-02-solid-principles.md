@@ -202,62 +202,61 @@ public class CircleResizer {
 > ⚠️ Отсюда правило – мы всегда должны повышать уровень когезии в компоненте. 
 > Повышение когезии приводит к достижению SRP. 
 
-#### Пример 5. Снижение связанности (Student)
+#### Снижение связанности (Customer)
 
 Рассмотрим другой пример.
 
 ```java
-public class Student {
+public class Customer {
 
-    private String studentId;
+    private String customerId;
     private String name;
 
-    // Нарушение SRP: Student знает, как сохранять себя в БД
     public void save() {
         try (Connection connection = DriverManager.getConnection(
                 "jdbc:mysql://localhost:3306/mydb", "root", "password")) {
             Statement stmt = connection.createStatement();
-            stmt.execute("INSERT INTO students (id, name) VALUES ('" 
-                    + studentId + "', '" + name + "')");
+            stmt.execute("INSERT INTO customers (id, name) VALUES ('" 
+                    + customerId + "', '" + name + "')");
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 }
 ```
-В текущей реализации класс `Student`, являющийся по сути моделью, **жестко связан** со слоем базы данных 
+В текущей реализации класс `Customer`, являющийся по сути моделью, **жестко связан** со слоем базы данных 
 через метод `save()`. Это создает проблему: если система переедет, например, с MySQL на NoSQL, придется переписывать 
-сам класс `Student`.
+сам класс `Customer`.
 
-Модель студента должна описывать только данные — такие как идентификатор, курс или группа. 
+Модель заказчика должна описывать только данные — такие как идентификатор, курс или группа. 
 Она не должна включать низкоуровневую логику сохранения в базе данных.
 
-В данной реализации `Student` выполняет сразу две задачи: хранит данные студента и умеет сохранять себя в БД.
+В данной реализации `Customer` выполняет сразу две задачи: хранит данные заказчика и умеет сохранять себя в БД.
 
 Поэтому также разделим этот класс, чтобы получить несколько слабо связанных систем (классов).
 
-В классе `Student` оставляем только данные. Ответственность за хранение убираем:
+В классе `Customer` оставляем только данные. Ответственность за хранение убираем:
 
 ```java
-public class Student {
+public class Customer {
 
-    private String studentId;
+    private String customerId;
     private String name;
 
     // getters & setters
 }
 ```
-После рефакторинга появляется `StudentRepository`, который отделяет работу с БД от данных студента:
+После рефакторинга появляется `CustomerRepository`, который отделяет работу с БД от данных заказчика:
 
 ```java
-public class StudentRepository {
+public class CustomerRepository {
 
-    public void save(Student student) {
+    public void save(Customer customer) {
         try (Connection connection = DriverManager.getConnection(
                 "jdbc:mysql://localhost:3306/mydb", "root", "password")) {
             Statement stmt = connection.createStatement();
-            stmt.execute("INSERT INTO students (id, name) VALUES ('" 
-                    + student.getStudentId() + "', '" + student.getName() + "')");
+            stmt.execute("INSERT INTO customers (id, name) VALUES ('" 
+                    + customer.getCustomerId() + "', '" + customer.getName() + "')");
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -266,11 +265,11 @@ public class StudentRepository {
 ```
 Теперь:
 
-- `Student` отвечает только за хранение данных студента.
-- `StudentRepository` отвечает только за работу с базой данных.
+- `Customer` отвечает только за хранение данных заказчика.
+- `CustomerRepository` отвечает только за работу с базой данных.
 
-Связанность между слоями снижена. `Student` больше не зависит от способа хранения данных. 
-Если завтра система переедет с MySQL на MongoDB или файл, код `Student` останется неизменным.
+Связанность между слоями снижена. `Customer` больше не зависит от способа хранения данных. 
+Если завтра система переедет с MySQL на MongoDB или файл, код `Customer` останется неизменным.
 
 При этом связанность можно снижать и далее, например — внедрить интерфейс репозитория для дальнейшего 
 ослабления зависимости от конкретной реализации базы данных.
