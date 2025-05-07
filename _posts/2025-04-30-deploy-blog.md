@@ -179,6 +179,19 @@ bundle exec jekyll s
 http://localhost:4000
 ```
 
+```
+Configuration file: /home/aleksey/RubyProjects/abykov.dev/_config.yml
+            Source: /home/aleksey/RubyProjects/abykov.dev
+       Destination: /home/aleksey/RubyProjects/abykov.dev/_site
+ Incremental build: disabled. Enable with --incremental
+      Generating... 
+                    done in 0.687 seconds.
+ Auto-regeneration: enabled for '/home/aleksey/RubyProjects/abykov.dev'
+    Server address: http://127.0.0.1:4000/
+  Server running... press ctrl-c to stop.
+
+```
+
 ### Как редактировать посты
 Работать с темой Chirpy (и любым другим Jekyll-сайтом) можно в любой среде, где установлены Ruby, Node.js и Jekyll. Например, в VS Code или RubyMine.
 ![Создание сайта www.abykov.dev](/assets/img/www-site-rubymine.png){: .shadow .rounded }
