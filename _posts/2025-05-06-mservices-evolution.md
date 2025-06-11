@@ -314,5 +314,6 @@ from("kafka:payments?brokers=cluster:9092")
 ## Статьи серии
 
 - **[Микросервисы: серия материалов о принципах, паттернах и практике](/posts/mservices-intro/)**
+- **[Микросервисная архитектура](/posts/mservices-architecture/)**
 - _(в разработке)_
 
