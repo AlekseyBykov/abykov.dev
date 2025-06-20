@@ -4,19 +4,24 @@
   icon: "fab fa-github"
 
 - type: stack-overflow
-  icon: 'fab fa-stack-overflow'
-  url:  'https://stackoverflow.com/users/29023248/user29023248'                  # Fill with your stackoverflow homepage
+  icon: "fab fa-stack-overflow"
+  url: "https://stackoverflow.com/users/29023248/user29023248" # Fill with your stackoverflow homepage
 
 #- type: twitter
 #  icon: "fa-brands fa-x-twitter"
+
+#- type: rss
+#  icon: "fas fa-rss"
+#  noblank: true
+
+- type: youtube
+  icon: "fab fa-youtube"
+  url: "https://www.youtube.com/@abykovdev"
 
 - type: email
   icon: "fas fa-envelope"
   noblank: true # open link in current tab
 
-- type: rss
-  icon: "fas fa-rss"
-  noblank: true
 # Uncomment and complete the url below to enable more contact options
 #
 # - type: mastodon
