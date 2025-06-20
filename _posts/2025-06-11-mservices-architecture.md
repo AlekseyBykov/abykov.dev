@@ -293,5 +293,5 @@ Gateway может реализовать базовую защиту от сб�
 
 - **[Микросервисы: серия материалов о принципах, паттернах и практике](/posts/mservices-intro/)**
 - **[Эволюция архитектур: от монолита к микросервисам](/posts/mservices-evolution/)**
-- **[Нужен ли Service Discovery в Docker-среде?](/posts/2025-06-20-service-discovery-needed/)**
+- **[Нужен ли Service Discovery в Docker-среде?](/posts/service-discovery-needed/)**
 - _(в разработке)_

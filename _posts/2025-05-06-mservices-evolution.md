@@ -315,5 +315,5 @@ from("kafka:payments?brokers=cluster:9092")
 
 - **[Микросервисы: серия материалов о принципах, паттернах и практике](/posts/mservices-intro/)**
 - **[Микросервисная архитектура](/posts/mservices-architecture/)**
-- **[Нужен ли Service Discovery в Docker-среде?](/posts/2025-06-20-service-discovery-needed/)**
+- **[Нужен ли Service Discovery в Docker-среде?](/posts/service-discovery-needed/)**
 - _(в разработке)_

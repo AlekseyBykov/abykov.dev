@@ -14,5 +14,5 @@ tags: [microservices, микросервисы, распределенные с�
 
 - **[Эволюция архитектур: от монолита к микросервисам](/posts/mservices-evolution/)**
 - **[Микросервисная архитектура](/posts/mservices-architecture/)**
-- **[Нужен ли Service Discovery в Docker-среде?](/posts/2025-06-20-service-discovery-needed/)**
+- **[Нужен ли Service Discovery в Docker-среде?](/posts/service-discovery-needed/)**
 - _(в разработке)_
