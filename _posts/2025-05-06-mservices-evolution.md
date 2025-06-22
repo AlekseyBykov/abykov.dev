@@ -3,7 +3,7 @@ title: "Эволюция архитектур: от монолита к микр
 layout: post
 date: 2025-05-06 18:53:00 +0300
 categories: [microservices]
-tags: [microservices, микросервисы, распределенные системы, монолит, soa, архитектура]
+tags: [microservices,distributed-systems, monolith, soa, architecture]
 ---
 
 Рассмотрим эволюцию архитектур программных систем на примере образовательной платформы **EduSphere** (произвольный пример).
@@ -316,4 +316,5 @@ from("kafka:payments?brokers=cluster:9092")
 - **[Микросервисы: серия материалов о принципах, паттернах и практике](/posts/mservices-intro/)**
 - **[Микросервисная архитектура](/posts/mservices-architecture/)**
 - **[Нужен ли Service Discovery в Docker-среде?](/posts/service-discovery-needed/)**
+- **[Изоляция данных и Feign: архитектура без сквозных связей](/posts/feign-vs-jpa-boundaries/)**
 - _(в разработке)_

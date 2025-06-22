@@ -3,7 +3,7 @@ title: "Нужен ли Service Discovery в Docker-среде?"
 layout: post
 date: 2025-06-20 18:00:00 +0300
 categories: [microservices]
-tags: [eureka, service discovery, spring cloud, docker, микросервисы, spring boot]
+tags: [eureka, service discovery, spring cloud, docker, microservices, spring boot]
 ---
 
 В микросервисной архитектуре сервисы взаимодействуют друг с другом по HTTP или через сообщения. Один из базовых вопросов, возникающий при построении такой системы: как один сервис узнает, где находится другой?
@@ -69,4 +69,5 @@ restTemplate.getForObject("http://profiles-service/api/users", String.class);
 - **[Микросервисы: серия материалов о принципах, паттернах и практике](/posts/mservices-intro/)**
 - **[Эволюция архитектур: от монолита к микросервисам](/posts/mservices-evolution/)**
 - **[Микросервисная архитектура](/posts/mservices-architecture/)**
+- **[Изоляция данных и Feign: архитектура без сквозных связей](/posts/feign-vs-jpa-boundaries/)**
 - _(в разработке)_

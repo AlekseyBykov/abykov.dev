@@ -3,7 +3,7 @@ title: "SOLID: серия материалов о принципах проек�
 layout: post
 date: 2025-05-02 09:38:00 +0300
 categories: [Программирование, Архитектура]
-tags: [SOLID, проектирование, Java, clean code, best practices, software design, чистая архитектура]
+tags: [solid, java, clean code, best practices, software design, clean architecture]
 ---
 
 При проектировании программных систем разработчики сталкиваются с множеством архитектурных решений.

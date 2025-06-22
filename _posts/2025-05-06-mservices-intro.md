@@ -3,7 +3,7 @@ title: "Микросервисы: серия материалов о принц�
 layout: post
 date: 2025-05-06 18:29:00 +0300
 categories: [microservices]
-tags: [microservices, микросервисы, распределенные системы]
+tags: [microservices, distributed-systems, architecture]
 ---
 
 Микросервисная архитектура — популярный подход к созданию гибких, масштабируемых и поддерживаемых систем. 
@@ -15,4 +15,5 @@ tags: [microservices, микросервисы, распределенные с�
 - **[Эволюция архитектур: от монолита к микросервисам](/posts/mservices-evolution/)**
 - **[Микросервисная архитектура](/posts/mservices-architecture/)**
 - **[Нужен ли Service Discovery в Docker-среде?](/posts/service-discovery-needed/)**
+- **[Изоляция данных и Feign: архитектура без сквозных связей](/posts/feign-vs-jpa-boundaries/)**
 - _(в разработке)_

@@ -3,7 +3,7 @@ title: "Микросервисная архитектура"
 layout: post
 date: 2025-06-11 15:12:00 +0300
 categories: [microservices]
-tags: [microservices, микросервисы, распределенные системы, архитектура, devops, ddd, spring boot, docker, kubernetes, api gateway, ci/cd, event-driven, паттерны, monolith to microservices]
+tags: [microservices, distributed-systems, architecture, devops, ddd, spring-boot, docker, kubernetes, api-gateway, ci-cd, event-driven, patterns, monolith-to-microservices]
 ---
 
 Микросервисы представляют собой небольшие, изолированные сервисы, развертываемые независимо друг от друга. Каждый из них реализует отдельную бизнес-функцию и взаимодействует с другими через сетевые протоколы.
@@ -294,4 +294,5 @@ Gateway может реализовать базовую защиту от сб�
 - **[Микросервисы: серия материалов о принципах, паттернах и практике](/posts/mservices-intro/)**
 - **[Эволюция архитектур: от монолита к микросервисам](/posts/mservices-evolution/)**
 - **[Нужен ли Service Discovery в Docker-среде?](/posts/service-discovery-needed/)**
+- **[Изоляция данных и Feign: архитектура без сквозных связей](/posts/feign-vs-jpa-boundaries/)**
 - _(в разработке)_
