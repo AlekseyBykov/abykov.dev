@@ -135,11 +135,19 @@ public interface ProfileClient {
 ```
 В этом случае Feign просто отправит запрос по заданному URL. Это полезно для локальной отладки, интеграционных тестов и использования внешних API без Eureka.
 
+## Нюансы тестирования Feign-клиентов
+
+При использовании Feign в интеграционных тестах важно помнить, что если сервис зарегистрирован через Service Discovery, то Feign будет искать адрес не напрямую, а через логическое имя (`@FeignClient(name = "profiles-service")`). Для работы тестов нужно, чтобы Eureka-сервер был доступен, и нужный сервис был в нем зарегистрирован, иначе будет ошибка вида:
+```java
+Load balancer does not contain an instance for the service profiles-service
+```
+Если Eureka недоступен, тесты упадут с `503` или `Connection Refused`.
+
 ## Статьи серии
 
 - **[Микросервисы: серия материалов о принципах, паттернах и практике](/posts/mservices-intro/)**
 - **[Эволюция архитектур: от монолита к микросервисам](/posts/mservices-evolution/)**
 - **[Микросервисная архитектура](/posts/mservices-architecture/)**
 - **[Нужен ли Service Discovery в Docker-среде?](/posts/service-discovery-needed/)**
-- **[Вызов других микросервисов с помощью Feign](/posts/open-feign-client-intro/)**
+- **[Изоляция данных и Feign: архитектура без сквозных связей](/posts/feign-vs-jpa-boundaries/)**
 - _(в разработке)_
