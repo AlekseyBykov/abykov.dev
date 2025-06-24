@@ -3,7 +3,7 @@ title: "Изоляция данных и Feign: архитектура без с
 layout: post
 date: 2025-06-22 18:00:00 +0300
 categories: [microservices]
-tags: [feign, microservices, architecture, spring-boot, communication]
+tags: [feign, spring-cloud, microservices, architecture, domain, spring-boot, inter-service-communication]
 ---
 
 В микросервисной архитектуре важнейшим принципом является **изоляция данных**. Каждый сервис должен быть независимым и автономным: он владеет своей базой данных, управляет своим доменом и не зависит от внутренних деталей других сервисов — ни на уровне кода, ни на уровне БД.
@@ -87,4 +87,5 @@ public interface ProfileClient {
 - **[Эволюция архитектур: от монолита к микросервисам](/posts/mservices-evolution/)**
 - **[Микросервисная архитектура](/posts/mservices-architecture/)**
 - **[Нужен ли Service Discovery в Docker-среде?](/posts/service-discovery-needed/)**
+- **[Вызов других микросервисов с помощью Feign](/posts/open-feign-client-intro/)**
 - _(в разработке)_

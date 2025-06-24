@@ -16,4 +16,5 @@ tags: [microservices, distributed-systems, architecture]
 - **[Микросервисная архитектура](/posts/mservices-architecture/)**
 - **[Нужен ли Service Discovery в Docker-среде?](/posts/service-discovery-needed/)**
 - **[Изоляция данных и Feign: архитектура без сквозных связей](/posts/feign-vs-jpa-boundaries/)**
+- **[Вызов других микросервисов с помощью Feign](/posts/open-feign-client-intro/)**
 - _(в разработке)_
