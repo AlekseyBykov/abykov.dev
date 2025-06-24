@@ -150,4 +150,5 @@ Load balancer does not contain an instance for the service profiles-service
 - **[Микросервисная архитектура](/posts/mservices-architecture/)**
 - **[Нужен ли Service Discovery в Docker-среде?](/posts/service-discovery-needed/)**
 - **[Изоляция данных и Feign: архитектура без сквозных связей](/posts/feign-vs-jpa-boundaries/)**
+- **[Как работает Service Discovery в Spring Cloud и зачем он нужен](/posts/service-discovery/)**
 - _(в разработке)_

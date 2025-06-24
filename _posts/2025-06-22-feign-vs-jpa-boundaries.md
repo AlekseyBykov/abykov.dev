@@ -88,4 +88,5 @@ public interface ProfileClient {
 - **[Микросервисная архитектура](/posts/mservices-architecture/)**
 - **[Нужен ли Service Discovery в Docker-среде?](/posts/service-discovery-needed/)**
 - **[Вызов других микросервисов с помощью Feign](/posts/open-feign-client-intro/)**
+- **[Как работает Service Discovery в Spring Cloud и зачем он нужен](/posts/service-discovery/)**
 - _(в разработке)_
