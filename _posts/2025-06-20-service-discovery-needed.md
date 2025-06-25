@@ -72,4 +72,5 @@ restTemplate.getForObject("http://profiles-service/api/users", String.class);
 - **[Изоляция данных и Feign: архитектура без сквозных связей](/posts/feign-vs-jpa-boundaries/)**
 - **[Вызов других микросервисов с помощью Feign](/posts/open-feign-client-intro/)**
 - **[Как работает Service Discovery в Spring Cloud и зачем он нужен](/posts/service-discovery/)**
+- **[API Gateway в микросервисной архитектуре](/posts/api-gateway/)**
 - _(в разработке)_

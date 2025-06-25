@@ -151,4 +151,5 @@ Load balancer does not contain an instance for the service profiles-service
 - **[Нужен ли Service Discovery в Docker-среде?](/posts/service-discovery-needed/)**
 - **[Изоляция данных и Feign: архитектура без сквозных связей](/posts/feign-vs-jpa-boundaries/)**
 - **[Как работает Service Discovery в Spring Cloud и зачем он нужен](/posts/service-discovery/)**
+- **[API Gateway в микросервисной архитектуре](/posts/api-gateway/)**
 - _(в разработке)_
