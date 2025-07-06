@@ -11,9 +11,7 @@ img.rounded {
   max-width: 100%;
 }
 
-span.icon-border:empty {
+/* Hide Categories tab in sidebar */
+.sidebar a[href='/categories/'] {
   display: none !important;
-  visibility: hidden !important;
-  width: 0 !important;
-  height: 0 !important;
 }
