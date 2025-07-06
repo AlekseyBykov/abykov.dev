@@ -10,3 +10,10 @@ img.rounded {
   width: 600px;
   max-width: 100%;
 }
+
+span.icon-border:empty {
+  display: none !important;
+  visibility: hidden !important;
+  width: 0 !important;
+  height: 0 !important;
+}
