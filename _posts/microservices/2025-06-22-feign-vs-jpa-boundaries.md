@@ -2,7 +2,7 @@
 title: "Изоляция данных и Feign: архитектура без сквозных связей"
 layout: post
 date: 2025-06-22 18:00:00 +0300
-categories: [microservices]
+categories: [java, microservices]
 tags: [feign, spring-cloud, microservices, architecture, domain, spring-boot, inter-service-communication]
 ---
 

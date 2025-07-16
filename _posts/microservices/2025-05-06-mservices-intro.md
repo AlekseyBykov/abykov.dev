@@ -2,7 +2,7 @@
 title: "Микросервисы: серия материалов о принципах, паттернах и практике"
 layout: post
 date: 2025-05-06 18:29:00 +0300
-categories: [microservices]
+categories: [java, microservices]
 tags: [microservices, distributed-systems, architecture]
 ---
 

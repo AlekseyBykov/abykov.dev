@@ -37,8 +37,7 @@ social:
   name: abykov.dev
   email: aleksey.n.bykov@gmail.com # change to your email address
   links:
-      - https://github.com/AlekseyBykov
-      - https://stackoverflow.com/users/1234567/aleksey-bykov
+    - https://github.com/AlekseyBykov
 
 # Site Verification Settings
 webmaster_verifications:

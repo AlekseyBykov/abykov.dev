@@ -3,9 +3,9 @@
 - type: github
   icon: "fab fa-github"
 
-- type: stack-overflow
-  icon: "fab fa-stack-overflow"
-  url: "https://stackoverflow.com/users/29023248/user29023248" # Fill with your stackoverflow homepage
+#- type: stack-overflow
+#  icon: "fab fa-stack-overflow"
+#  url: "https://stackoverflow.com/users/29023248/user29023248" # Fill with your stackoverflow homepage
 
 #- type: twitter
 #  icon: "fa-brands fa-x-twitter"

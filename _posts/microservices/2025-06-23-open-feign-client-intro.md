@@ -2,7 +2,7 @@
 title: "Вызов других микросервисов с помощью Feign"
 layout: post
 date: 2025-06-23 18:00:00 +0300
-categories: [microservices]
+categories: [java, microservices]
 tags: [feign, spring-cloud, microservices, service-discovery, architecture, spring-boot, inter-service-communication]
 ---
 

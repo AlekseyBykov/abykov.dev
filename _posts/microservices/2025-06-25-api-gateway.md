@@ -2,7 +2,7 @@
 title: "API Gateway в микросервисной архитектуре"
 layout: post
 date: 2025-06-25 10:00:00 +0300
-categories: [microservices]
+categories: [java, microservices]
 tags: [gateway, spring-cloud, spring-cloud-gateway, edge-server, microservices, service, spring-boot]
 ---
 

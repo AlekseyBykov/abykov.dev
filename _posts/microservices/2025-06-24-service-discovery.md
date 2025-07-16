@@ -2,7 +2,7 @@
 title: "Как работает Service Discovery в Spring Cloud и зачем он нужен"
 layout: post
 date: 2025-06-24 10:00:00 +0300
-categories: [microservices]
+categories: [java, microservices]
 tags: [feign, spring-cloud, eureka, microservices, service-discovery, spring-boot, inter-service-communication]
 ---
 

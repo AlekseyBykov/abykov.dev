@@ -2,7 +2,7 @@
 title: "Микросервисная архитектура"
 layout: post
 date: 2025-06-11 15:12:00 +0300
-categories: [microservices]
+categories: [java, microservices]
 tags: [microservices, distributed-systems, architecture, devops, ddd, spring-boot, docker, kubernetes, api-gateway, ci-cd, event-driven, patterns, monolith-to-microservices]
 ---
 

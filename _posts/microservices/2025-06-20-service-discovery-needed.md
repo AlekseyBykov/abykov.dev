@@ -2,7 +2,7 @@
 title: "Нужен ли Service Discovery в Docker-среде?"
 layout: post
 date: 2025-06-20 18:00:00 +0300
-categories: [microservices]
+categories: [java, microservices]
 tags: [eureka, service discovery, spring cloud, docker, microservices, spring boot]
 ---
 
