@@ -1,12 +1,10 @@
 ---
 layout: post
-title: "Хранение больших объемов документов в Postgres: партиционирование и архивирование"
+title: "Эффективное хранение документов в Postgres: партиции, индексы, архив"
 date: 2025-08-21 12:15:00 +0100
 categories: [highload, databases, оптимизация]
 tags: [postgresql, highload, производительность, оптимизация, партиционирование, архитектура]
 ---
-
-## Введение
 
 Предположим, что корпоративная СЭД обрабатывает порядка ~1 000 000 документов в сутки (≈365 млн строк в год). Хранение всех записей в одной таблице приводит к деградации производительности:
 
@@ -32,6 +30,9 @@ tags: [postgresql, highload, производительность, оптими�
 - **Архивация партиций по политике ретеншна**. Устаревшие партиции (например, старше 12 месяцев) не удаляются построчно, а целиком отсоединяются (`DETACH`) или удаляются (`DROP`). Такой подход позволяет мгновенно освободить сотни гигабайт данных без долгих транзакций и блокировок. При необходимости они могут быть перенесены в отдельный архивный кластер или сохранены в файловом формате (например, [Apache Parquet](https://parquet.apache.org)).
 
 - **Разделение метаданных и полезной нагрузки**. В PostgreSQL целесообразно хранить только "шапку документа": идентификаторы, даты, статусы и ключевые поля для поиска. Тяжелый payload (большие XML/JSON, бинарные вложения, файлы) лучше вынести в объектное хранилище (S3, MinIO). В БД остается лишь ссылка и контрольная сумма. Это уменьшает размер партиций и ускоряет индексацию.
+
+> ⚠️ Ретеншн (retention policy) — это просто "политика хранения данных", то есть правила, сколько времени и в каком виде данные хранятся в основной 
+> БД. Например, хранить документы 90 дней в "горячих" партициях, до 12 месяцев в "теплых" партициях, все старше года переносить в архив или удалять.
 
 ## Модель hot/warm/cold
 
@@ -205,6 +206,206 @@ where date(created_at) = current_date
 - Всегда проверять планы выполнения (`explain analyze`);
 - Поддерживать соответствие фильтров в запросах и условий индексов;
 - Для API-запросов внедрять обязательные параметры фильтрации по времени.
+
+## Готовые сниппеты
+### Создание дневных партиций на месяц вперед
+
+Создает daily-партиции для родительской таблицы с RANGE-секционированием по `created_at`:
+
+```sql
+create or replace function create_daily_partitions(
+  parent_table text,        -- имя родителя, например 'document'
+  start_date   date,        -- с какой даты создавать
+  days         int          -- сколько дней вперед
+) returns void
+language plpgsql
+as $$
+declare
+  d date;
+  sql text;
+  part_name text;
+begin
+  for i in 0..days-1 loop
+    d := start_date + i;
+    part_name := format('%I_%s', parent_table, to_char(d, 'YYYY_MM_DD'));
+    sql := format(
+      'create table if not exists %s partition of %I
+         for values from (%L) to (%L);',
+      part_name, parent_table, d::timestamptz, (d + 1)::timestamptz
+    );
+    execute sql;
+  end loop;
+end
+$$;
+
+-- пример использования:
+select create_daily_partitions('document', date '2025-09-01', 31);
+```
+
+Функция предполагает, что document уже создан как partition by range (`created_at`).
+
+### Удаление партиций старше N дней (ретеншн)
+
+Безопасно парсит дату из имени партиции формата `document_YYYY_MM_DD` и дропает старше порога. Без `CASCADE` по умолчанию:
+
+```sql
+create or replace function drop_old_partitions(
+  table_prefix text,   -- префикс родителя, например 'document'
+  keep_days    int,    -- сколько дней держать
+  use_cascade  boolean default false -- использовать ли CASCADE (по умолчанию нет)
+) returns void
+language plpgsql
+as $$
+declare
+  r record;
+  cutoff date := (now() - (keep_days || ' days')::interval)::date;
+  part_date date;
+  drop_sql text;
+begin
+  for r in
+    select schemaname, tablename
+    from pg_tables
+    where tablename like table_prefix || '\_%' escape '\'
+  loop
+    begin
+      part_date := to_date(
+        substring(r.tablename from '.+_(\d{4}_\d{2}_\d{2})$'),
+        'YYYY_MM_DD'
+      );
+
+      if part_date is not null and part_date < cutoff then
+        drop_sql := format('drop table if exists %I.%I %s;',
+          r.schemaname, r.tablename,
+          case when use_cascade then 'cascade' else '' end
+        );
+        execute drop_sql;
+      end if;
+
+    exception when others then
+      raise notice 'skip %.% due to: %', r.schemaname, r.tablename, sqlerrm;
+    end;
+  end loop;
+end
+$$;
+
+-- пример: держим 120 дней, без CASCADE
+select drop_old_partitions('document', 120, false);
+```
+
+Рукомендуется держать имена партиций в едином формате `document_YYYY_MM_DD`. Если есть внешние ключи на партиции — внимательно отнестись к `CASCADE`.
+
+### Перенос партиции в архивную схему
+
+Отсоединяет партицию от «боевого» родителя и прикрепляет к "родителю-архиву" в схеме `archive`:
+
+```sql
+-- предпосылка: в схеме archive есть родитель с тем же DDL:
+--   create table archive.document (...) partition by range (created_at);
+
+do $$
+declare
+  part text := 'document_2024_08_21';
+begin
+  execute format('alter table %I detach partition %I;', 'document', part);
+  execute format(
+    'alter table %I.%I attach partition %I for values from (%L) to (%L);',
+    'archive', 'document', part, timestamp '2024-08-21', timestamp '2024-08-22'
+  );
+end $$;
+
+```
+
+Если архив хранится в другом кластере — вместо `attach` используйте логическую репликацию/дамп или оставьте партицию как отдельную таблицу `archive.document_YYYY_MM_DD`.
+
+### Индексы для hot-партиций (partial B-Tree)
+
+Создает частичный индекс "под запросы": активные документы конкретной партиции:
+
+```sql
+create or replace function ensure_hot_indexes(part_table text)
+returns void language plpgsql as $$
+begin
+  execute format(
+    'create index if not exists %I_acc_created_active_idx
+       on %I (account_id, created_at desc)
+     where status = ''ACTIVE'';',
+    part_table || '_', part_table
+  );
+
+  execute format(
+    'create index if not exists %I_created_desc_idx
+       on %I (created_at desc);',
+    part_table || '_', part_table
+  );
+end $$;
+
+-- пример:
+select ensure_hot_indexes('document_2025_08_21');
+
+```
+### BRIN для исторических партиций
+
+Компактный индекс по времени для больших "теплых"/"холодных" таблиц:
+
+```sql
+create or replace function ensure_brin_created(part_table text)
+returns void language plpgsql as $$
+begin
+  execute format(
+    'create index if not exists %I_created_brin
+       on %I using brin (created_at) with (pages_per_range=128);',
+    part_table || '_', part_table
+  );
+end $$;
+
+-- пример:
+select ensure_brin_created('document_2025_01');
+
+```
+`pages_per_range` подберите под свой профиль данных и размер блоков. Чем больше параметр — тем меньше индекс и тем грубее диапазоны.
+
+### Пример корректного запроса с отсечением партиций
+
+Фильтр по полю партиционирования обязателен; поля в WHERE должны совпадать с индексами:
+
+```sql
+explain analyze
+select id, created_at
+from document
+where created_at >= now() - interval '30 days'
+  and status = 'ACTIVE'
+  and account_id = :acc
+order by created_at desc
+limit 100;
+```
+
+Следет избегать `date(created_at) = ...` — такие функции на колонке мешают отсечению партиций и использованию индексов.
+
+### Заготовка CRON-job (pg_cron) для обслуживания
+
+Плановое создание будущих партиций и удаление старых:
+
+```sql
+-- пример для расширения pg_cron
+-- создать партиции на 30 дней вперед каждую ночь
+select cron.schedule('0 2 * * *',
+  $$select create_daily_partitions('document', (current_date + 1), 30);$$
+);
+
+-- удалять партиции старше 120 дней каждую ночь
+select cron.schedule('30 2 * * *',
+  $$select drop_old_partitions('document', 120, false);$$
+);
+```
+
+Вместо `pg_cron` можно использовать внешние планировщики (`systemd timer`, `Jenkins`, `Airflow`). Главное — запускать операции вне пиков.
+
+## Мини-FAQ
+
+- **Почему нельзя просто делать DELETE старого?** Потому что PostgreSQL при `DELETE` только помечает строки как удаленные, а сами страницы таблицы остаются занятыми до очистки `VACUUM`. В итоге растет объем таблицы и индексов, а производительность падает. Удаление целой партиции (`DROP PARTITION`) выполняется мгновенно и не оставляет «хвостов».
+- **Зачем отделять payload?** Большие XML/JSON перегружают дисковый ввод-вывод и механизм TOAST. Храните payload во внешнем объектном хранилище (MinIO, S3), а в базе — только ссылку и хеш. Так метаданные остаются компактными, а запросы быстрыми.
+- **А если нужен поиск по payload?** Извлекайте необходимые атрибуты из payload при загрузке и сохраняйте их как отдельные колонки или индексы в метаданных. Сам payload пусть остаеся за пределами БД.
+- **Week или Day партиции?** При потоке порядка `1M` документов в день лучше использовать дневные партиции. Если поток ниже (например, `50–100k/день`), можно ограничиться недельными.
 
 ## Итог
 
