@@ -6,7 +6,7 @@ categories: [DevOps, Spring Boot]
 tags: [spring-boot, github-actions, vps, cicd, deploy, pipeline, automation, systemd, nginx, ssl]
 ---
 
-В этой статье разберем, как развернуть Spring Boot приложение на **VPS** и настроить **автодеплой** из GitHub. В качестве примера используем небольшой сервис - **Weather Map Demo** - и опубликуем его на поддомене [weather.abykov.dev](https://weather.abykov.dev).
+В этой статье разберем, как развернуть Spring Boot приложение на **VPS** и настроить **автодеплой** из GitHub. В качестве примера используем небольшой сервис - [**Weather Map Demo**](https://github.com/AlekseyBykov/pets.weather-map-demo) - и опубликуем его на поддомене [weather.abykov.dev](https://weather.abykov.dev).
 
 Арендуем сервер и настроим поддомен, `systemd`-сервис, HTTPS через **Nginx/Let's Encrypt** и **CI/CD**-пайплайн на **GitHub Actions**.
 
@@ -314,11 +314,11 @@ jobs:
 
 ```
 
-## Подготовка SSH-ключей для GitHub Actions
+### Подготовка SSH-ключей для GitHub Actions
 
 Для безопасного копирования артефактов на сервер через GitHub Actions используется аутентификация по SSH-ключам. Нам понадобится сгенерировать пару ключей: приватный (для GitHub) и публичный (для VPS).
 
-### Генерация ключей
+#### Генерация ключей
 
 На локальной машине выполним:
 ```bash
@@ -334,7 +334,7 @@ ssh-keygen -t ed25519 -C "github-actions" -f github_actions
 - `github_actions` - **приватный ключ** (его кладем в GitHub Secrets);
 - `github_actions.pub` - **публичный ключ** (его добавляем на VPS).
 
-### Установка ключа на VPS
+#### Установка ключа на VPS
 
 Подключаемся к серверу:
 
@@ -350,7 +350,7 @@ chmod 600 ~/.ssh/authorized_keys
 
 Теперь GitHub Actions сможет подключаться по SSH без пароля.
 
-## Secrets в GitHub
+### Secrets в GitHub
 
 Чтобы pipeline имел доступ к VPS, необходимо добавить следующие секреты в настройках репозитория GitHub (**Settings** → **Secrets and variables** → **Actions**):
 
@@ -360,8 +360,39 @@ chmod 600 ~/.ssh/authorized_keys
 
 После этого пайплайн сможет без проблем подключаться к серверу и деплоить обновления.
 
-## Результат
+### Результат
 
 После всех настроек, при каждом коммите в ветку `main` GitHub Actions автоматически соберет JAR, загрузит его на VPS в `/opt/weather-demo/`, перезапустит сервис `weather-demo`.
 
 Таким образом, весь деплой сводится к одному действию - `git push`.
+
+### Дополнительно: уведомления о деплое
+
+После настройки CI/CD полезно получать уведомления о том, успешно ли прошел деплой. GitHub Actions поддерживает интеграции с популярными мессенджерами (Slack, Telegram, Matrix и др).
+
+#### Пример: уведомления в Matrix
+
+```bash
+      - name: Notify Matrix room
+        uses: matrix-org/matrix-message-action@v1
+        with:
+          homeserver: "https://matrix.org"
+          access_token: ${{ secrets.MATRIX_ACCESS_TOKEN }}
+          room_id: "!yourRoomId:matrix.org"
+          message: |
+            ✅ Deploy completed successfully on weather.abykov.dev
+
+```
+
+Здесь:
+
+- `MATRIX_ACCESS_TOKEN` хранится в GitHub Secrets и генерируется в Matrix (для бота или пользователя).
+- `room_id` - уникальный идентификатор комнаты, его можно найти в настройках Matrix.
+
+#### Другие варианты
+
+- Slack: через [slackapi/slack-github-action](https://github.com/slackapi/slack-github-action);
+- Telegram: через [appleboy/telegram-action](https://github.com/appleboy/telegram-action);
+- Email: через стандартный `actions/send-mail`
+
+Таким образом, можно получать уведомления о каждом деплое прямо в рабочий чат.
