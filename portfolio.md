@@ -71,6 +71,49 @@ permalink: /portfolio/
 
 ---
 
+## Универсальная фронт-офисная система (УФОС)
+
+**Роль:** Java developer
+
+**Технологии:** Java 11, Spring 4, Hibernate, SOAP/REST, JAXB, SAML, XSLT, JasperReports, PostgreSQL, Ubuntu.
+
+<div class="portfolio-gallery">
+  <a href="/assets/img/portfolio/ufos-1.png" class="glb" data-gallery="ufos" data-title="">
+    <img src="/assets/img/portfolio/ufos-1.png" alt="" width="140" />
+  </a>
+
+  <a href="/assets/img/portfolio/ufos-2.png" class="glb" data-gallery="ufos" data-title="">
+    <img src="/assets/img/portfolio/ufos-2.png" alt="" width="140" />
+  </a>
+
+  <a href="/assets/img/portfolio/ufos-3.png" class="glb" data-gallery="ufos" data-title="">
+    <img src="/assets/img/portfolio/ufos-3.png" alt="" width="140" />
+  </a>
+
+  <a href="/assets/img/portfolio/ufos-4.png" class="glb" data-gallery="ufos" data-title="">
+    <img src="/assets/img/portfolio/ufos-4.png" alt="" width="140" />
+  </a>
+
+  <a href="/assets/img/portfolio/ufos-5.png" class="glb" data-gallery="ufos" data-title="">
+    <img src="/assets/img/portfolio/ufos-5.png" alt="" width="140" />
+  </a>
+
+  <a href="/assets/img/portfolio/ufos-6.png" class="glb" data-gallery="ufos" data-title="">
+    <img src="/assets/img/portfolio/ufos-6.png" alt="" width="140" />
+  </a>
+
+  <a href="/assets/img/portfolio/ufos-7.png" class="glb" data-gallery="ufos" data-title="">
+    <img src="/assets/img/portfolio/ufos-7.png" alt="" width="140" />
+  </a>
+
+  <a href="/assets/img/portfolio/ufos-8.png" class="glb" data-gallery="ufos" data-title="">
+    <img src="/assets/img/portfolio/ufos-8.png" alt="" width="140" />
+  </a>
+
+</div>
+
+---
+
 ## Подсистема управления доходами (ПУД)
 
 **Роль:** Senior Java developer
