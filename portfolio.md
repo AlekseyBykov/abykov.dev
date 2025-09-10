@@ -8,7 +8,7 @@ permalink: /portfolio/
 
 **Роль:** Java developer
 
-**Технологии:** Java 7–8, ZKoss, Spring 4, Hibernate, RabbitMQ, SOAP/REST, JAXB, JiBX, XSLT, JasperReports, BI Publisher, Oracle 10g, Maven.
+**Технологии:** Java 7–8, ZKoss, Spring 4, Hibernate, RabbitMQ, SOAP/REST, JAXB, JiBX, XSLT, JasperReports, BI Publisher, Oracle 10g, Windows.
 
 <div class="portfolio-gallery">
   <a href="/assets/img/portfolio/sufd-1.png" class="glb" data-gallery="sufd" data-title="">
@@ -104,6 +104,54 @@ permalink: /portfolio/
 
   <a href="/assets/img/portfolio/pud-7.png" class="glb" data-gallery="pud" data-title="">
     <img src="/assets/img/portfolio/pud-7.png" alt="" width="140" />
+  </a>
+
+  <a href="/assets/img/portfolio/pud-8.png" class="glb" data-gallery="pud" data-title="">
+    <img src="/assets/img/portfolio/pud-8.png" alt="" width="140" />
+  </a>
+
+  <a href="/assets/img/portfolio/pud-9.png" class="glb" data-gallery="pud" data-title="">
+    <img src="/assets/img/portfolio/pud-9.png" alt="" width="140" />
+  </a>
+
+  <a href="/assets/img/portfolio/pud-10.png" class="glb" data-gallery="pud" data-title="">
+    <img src="/assets/img/portfolio/pud-10.png" alt="" width="140" />
+  </a>
+
+  <a href="/assets/img/portfolio/pud-11.png" class="glb" data-gallery="pud" data-title="">
+    <img src="/assets/img/portfolio/pud-11.png" alt="" width="140" />
+  </a>
+
+  <a href="/assets/img/portfolio/pud-12.png" class="glb" data-gallery="pud" data-title="">
+    <img src="/assets/img/portfolio/pud-12.png" alt="" width="140" />
+  </a>
+
+  <a href="/assets/img/portfolio/pud-13.png" class="glb" data-gallery="pud" data-title="">
+    <img src="/assets/img/portfolio/pud-13.png" alt="" width="140" />
+  </a>
+
+  <a href="/assets/img/portfolio/pud-14.png" class="glb" data-gallery="pud" data-title="">
+    <img src="/assets/img/portfolio/pud-14.png" alt="" width="140" />
+  </a>
+
+  <a href="/assets/img/portfolio/pud-15.png" class="glb" data-gallery="pud" data-title="">
+    <img src="/assets/img/portfolio/pud-15.png" alt="" width="140" />
+  </a>
+
+  <a href="/assets/img/portfolio/pud-16.png" class="glb" data-gallery="pud" data-title="">
+    <img src="/assets/img/portfolio/pud-16.png" alt="" width="140" />
+  </a>
+
+  <a href="/assets/img/portfolio/pud-17.png" class="glb" data-gallery="pud" data-title="">
+    <img src="/assets/img/portfolio/pud-17.png" alt="" width="140" />
+  </a>
+
+  <a href="/assets/img/portfolio/pud-18.png" class="glb" data-gallery="pud" data-title="">
+    <img src="/assets/img/portfolio/pud-18.png" alt="" width="140" />
+  </a>
+
+  <a href="/assets/img/portfolio/pud-19.png" class="glb" data-gallery="pud" data-title="">
+    <img src="/assets/img/portfolio/pud-19.png" alt="" width="140" />
   </a>
 
 </div>
