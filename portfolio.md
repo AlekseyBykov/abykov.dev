@@ -4,11 +4,11 @@ title: "Портфолио"
 permalink: /portfolio/
 ---
 
-## СУФД (АСФК, логистика, портал)
+## Система удаленного финансового документооборота (СУФД)
 
-**Роль:** Java-разработчик (Back-end)
+**Роль:** Java developer
 
-**Технологии:** Java 7–8, ZKoss, Spring 4, Hibernate, SOAP/REST, JAXB, JiBX, XSLT, JasperReports, BI Publisher, Oracle 10g, Maven.
+**Технологии:** Java 7–8, ZKoss, Spring 4, Hibernate, RabbitMQ, SOAP/REST, JAXB, JiBX, XSLT, JasperReports, BI Publisher, Oracle 10g, Maven.
 
 <div class="portfolio-gallery">
   <a href="/assets/img/portfolio/sufd-1.png" class="glb" data-gallery="sufd" data-title="">
@@ -71,4 +71,39 @@ permalink: /portfolio/
 
 ---
 
+## Подсистема управления доходами (ПУД)
 
+**Роль:** Senior Java developer
+
+**Технологии:** Java 21, Go, Spring Boot 3, Spring 6, Hibernate 6, REST/SOAP, OpenAPI 3.0, Kafka, S3, JAXB, XSLT, JasperReports, OpenTelemetry, Jaeger, Docker, Kubernetes, PostgreSQL, Ubuntu.
+
+<div class="portfolio-gallery">
+  <a href="/assets/img/portfolio/pud-1.png" class="glb" data-gallery="pud" data-title="">
+    <img src="/assets/img/portfolio/pud-1.png" alt="" width="140" />
+  </a>
+
+  <a href="/assets/img/portfolio/pud-2.png" class="glb" data-gallery="pud" data-title="">
+    <img src="/assets/img/portfolio/pud-2.png" alt="" width="140" />
+  </a>
+
+  <a href="/assets/img/portfolio/pud-3.png" class="glb" data-gallery="pud" data-title="">
+    <img src="/assets/img/portfolio/pud-3.png" alt="" width="140" />
+  </a>
+
+  <a href="/assets/img/portfolio/pud-4.png" class="glb" data-gallery="pud" data-title="">
+    <img src="/assets/img/portfolio/pud-4.png" alt="" width="140" />
+  </a>
+
+  <a href="/assets/img/portfolio/pud-5.png" class="glb" data-gallery="pud" data-title="">
+    <img src="/assets/img/portfolio/pud-5.png" alt="" width="140" />
+  </a>
+
+  <a href="/assets/img/portfolio/pud-6.png" class="glb" data-gallery="pud" data-title="">
+    <img src="/assets/img/portfolio/pud-6.png" alt="" width="140" />
+  </a>
+
+  <a href="/assets/img/portfolio/pud-7.png" class="glb" data-gallery="pud" data-title="">
+    <img src="/assets/img/portfolio/pud-7.png" alt="" width="140" />
+  </a>
+
+</div>
