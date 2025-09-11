@@ -4,7 +4,7 @@ title: "Портфолио"
 permalink: /portfolio/
 ---
 
-## АИС ГП РСХ
+## Java Project #1 (Enterprise Resource Planning & Reporting System)
 
 Роль: Architect, Java developer
 
