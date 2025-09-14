@@ -2,7 +2,7 @@
 layout: post
 title: "Java под капотом: от исходников к байткоду и оптимизациям"
 date: 2025-09-14
-categories: [interview, java]
+categories: [java, java-core]
 tags: [jvm, jdk, jre, jit, aot]
 ---
 
