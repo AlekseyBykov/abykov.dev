@@ -977,7 +977,7 @@ Exception in thread "main" java.lang.OutOfMemoryError:
     unable to create new native thread
 ```
 
-## Примеры и инструменты
+## Инструменты
 
 Теория про ClassLoader, память и JIT важна, но еще полезнее уметь «заглянуть внутрь» JVM в реальной программе. Для этого у нас есть встроенные инструменты и утилиты.
 
@@ -1087,6 +1087,81 @@ jcmd <pid> JFR.start name=myrecord settings=profile filename=recording.jfr
 jcmd <pid> JFR.stop name=myrecord
 ```
 Файл `recording.jfr` можно открыть в **Java Mission Control**.
+
+## Примеры
+
+Полный код примеров и инструкции доступны в [pets.diagnostic-lab](https://github.com/AlekseyBykov/pets.diagnostic-lab) на GitHub:
+
+### Memory Leak
+
+Чтобы наглядно показать, как возникает `OutOfMemoryError` в результате утечки памяти, рассмотрим простой эксперимент.
+```java
+public class MemoryLeakSimulator {
+
+    public static void run() {
+        List<byte[]> leakyList = new ArrayList<>();
+        while (true) {
+            leakyList.add(new byte[1024 * 1024]); // 1 MB
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException ignored) {}
+        }
+    }
+}
+```
+Запустим этот код с жестким ограничением по памяти (`-Xms64m -Xmx128m`) и включенным дампом кучи (создастся файл дампа памяти `heapdump.hprof`):
+```bash
+java -Xms64m -Xmx128m \
+     -XX:+HeapDumpOnOutOfMemoryError \
+     -XX:HeapDumpPath=./heapdump.hprof \
+     -cp target/diagnostic-lab-1.0-SNAPSHOT.jar \
+     dev.abykov.pets.diagnostic_lab.MainApp memory
+```
+
+Мониторинг через JConsole показывает график, где used heap приближается к максимальному (`-Xmx128m`), без значительных спусков:
+
+![jconsole memory leak](/assets/img/javacore/jconsole-mleak-demo-1.png){: .shadow .rounded }
+
+Утечка памяти может проявляться не сразу, особенно на больших серверах, когда heap достаточно велик: график роста может быть незаметен. В продакшене такие утечки приводят к постепенному снижению производительности, increased GC overhead, и в конце — к OutOfMemory.
+
+Что видно на скрине Overview:
+
+![jconsole memory leak](/assets/img/javacore/jconsole-mleak-demo-2.png){: .shadow .rounded }
+
+1. **Heap Memory Usage (левый верхний график)**
+- Линейный рост памяти от ~30 МБ до ~130 МБ.
+- Нет характерных пилообразных спадов после GC - сборщик мусора не может освободить память.
+- Это ключевой симптом утечки.
+
+2. **Threads (правый верхний график)**
+- Всего было 15 потоков, и они оставались стабильными.
+- Резкое падение до нуля означает, что JVM аварийно завершилась (из-за OOM).
+
+3. **Classes (левый нижний график)**
+- Загружено ~2400 классов, и к моменту завершения число стабильное.
+- Нет роста — значит, утечки классов (classloader leak) тут нет.
+
+4. **CPU Usage (правый нижний график)**
+- Нагрузка минимальна (0.2–0.4%). 
+- Это подтверждает, что проблема именно в удержании объектов в памяти, а не в CPU или активных потоках.
+
+Через некоторое время выбрасывается `java.lang.OutOfMemoryError: Java heap space`:
+
+![idea memory leak](/assets/img/javacore/mleak-demo-2.png){: .shadow .rounded }
+
+Чтобы подтвердить источник утечки, откроем дамп (`heapdump.hprof`) в Eclipse MAT. В *Dominator Tree* сразу видно, что почти вся память удерживается через `main`-поток. Внутри него находится коллекция `ArrayList`, а ее `elementData` хранит массивы `byte[]`, каждый по ~1 МБ:
+
+![eclipse mat dominator tree](/assets/img/javacore/eclipse-mat-mleak-demo-1.png){: .shadow .rounded }
+
+Таким образом, GC не может освободить память: список остается достижимым из `main`, и все вложенные `byte[]` удерживаются, пока приложение не упадет с `OutOfMemoryError`.
+
+Eclipse MAT также генерирует отчет *Leak Suspects Report*. В нем видно, что поток `main` удерживает почти всю память (95.6%), а корень утечки находится в `MemoryLeakSimulator.run()` на строке 13:
+
+![mat leak suspect report](/assets/img/javacore/eclipse-mat-mleak-demo-2.png){: .shadow .rounded }
+
+Такой отчет часто указывает не только на удерживающий объект, но и на конкретный участок кода, 
+что существенно ускоряет поиск утечки в реальных приложениях.
+
 
 ## Заключение
 
