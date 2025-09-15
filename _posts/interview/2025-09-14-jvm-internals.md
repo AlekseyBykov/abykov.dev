@@ -816,5 +816,288 @@ Iteration   3: 18 ns/op
 
 Видно, что первые итерации медленные (интерпретатор), потом JIT скомпилировал код и скорость выросла в разы.
 
+## Ошибки и граничные случаи
 
+JVM строго следует спецификации, и при нарушении правил выбрасывает ошибки на разных стадиях: при загрузке, связывании, инициализации, выполнении или в работе с памятью. Рассмотрим основные типы ошибок.
 
+### Ошибки загрузки классов
+
+#### ClassNotFoundException 
+
+Данное исключение возникает, когда класс не найден в момент явной загрузки (например, `Class.forName("Foo")`).
+
+Пример:
+```java
+public class LoadDemo {
+
+    public static void main(String[] args) throws Exception {
+        Class.forName("demo.Missing"); // пытаемся загрузить отсутствующий класс
+    }
+}
+```
+
+Результат:
+```java
+Exception in thread "main" java.lang.ClassNotFoundException: demo.Missing
+
+```
+
+ASCII-схема:
+```text
+Application ClassLoader
+   |
+   +-- ищет demo.Missing → не находит → ClassNotFoundException
+
+```
+
+#### NoClassDefFoundError
+
+Возникает, если класс был доступен во время компиляции, но отсутствует во время выполнения.
+
+Пример:
+```java
+public class Main {
+    public static void main(String[] args) {
+        Helper.say(); // класс Helper скомпилирован, но удален из classpath
+    }
+}
+```
+
+Результат:
+```java
+Exception in thread "main" java.lang.NoClassDefFoundError: Helper
+```
+
+### Ошибки байткода
+
+#### VerifyError
+
+JVM проверяет байткод на корректность во время Linking → Verification. Если байткод нарушает правила (например, неверные операции со стеком), будет выброшена ошибка.
+
+Пример (искусственно испорченный байткод):
+```bash
+javac Demo.java
+# редактируем class-файл hex-редактором или используем ASM, чтобы сломать сигнатуры
+java Demo
+```
+
+Результат:
+```bash
+Exception in thread "main" java.lang.VerifyError: (class: Demo, method: main ...)
+```
+
+### Ошибки памяти
+
+#### StackOverflowError
+
+Переполнение стека метода (рекурсия без выхода). Например:
+```java
+public class StackOverflowDemo {
+
+    static void recurse() {
+        recurse();
+    }
+    public static void main(String[] args) {
+        recurse();
+    }
+}
+```
+Результат:
+```bash
+Exception in thread "main" java.lang.StackOverflowError
+```
+
+ASCII-схема:
+```text
+Thread-1 Stack
++-------------------+
+| recurse() frame   | ← переполняется
+| recurse() frame   |
+| recurse() frame   |
+| ...               |
+```
+
+#### OutOfMemoryError: Java heap space
+
+Если в куче недостаточно памяти для размещения объекта. Например:
+```java
+public class HeapOOM {
+    public static void main(String[] args) {
+        int[] big = new int[Integer.MAX_VALUE]; // слишком большой массив
+    }
+}
+```
+Результат:
+```bash
+Exception in thread "main" java.lang.OutOfMemoryError: Java heap space
+```
+
+#### OutOfMemoryError: Metaspace
+
+Слишком много загруженных классов (динамическая генерация). Пример:
+```java
+import net.sf.cglib.proxy.Enhancer;
+import net.sf.cglib.proxy.MethodInterceptor;
+
+public class MetaspaceOOM {
+    public static void main(String[] args) {
+        while (true) {
+            Enhancer enhancer = new Enhancer();
+            enhancer.setSuperclass(Object.class);
+            enhancer.setUseCache(false);
+            enhancer.setCallback((MethodInterceptor) 
+               (o, m, a, proxy) -> proxy.invokeSuper(o, a));
+            enhancer.create(); // генерирует новый класс
+        }
+    }
+}
+```
+Результат:
+```bash
+Exception in thread "main" java.lang.OutOfMemoryError: Metaspace
+```
+#### OutOfMemoryError: unable to create new native thread
+
+Когда ОС больше не может выделить поток:
+
+```java
+public class ThreadOOM {
+    public static void main(String[] args) {
+        while (true) {
+            new Thread(() -> {
+                try { Thread.sleep(1000000); } catch (InterruptedException e) {}
+            }).start();
+        }
+    }
+}
+```
+Результат:
+```bash
+Exception in thread "main" java.lang.OutOfMemoryError: 
+    unable to create new native thread
+```
+
+## Примеры и инструменты
+
+Теория про ClassLoader, память и JIT важна, но еще полезнее уметь «заглянуть внутрь» JVM в реальной программе. Для этого у нас есть встроенные инструменты и утилиты.
+
+### javap — дизассемблер байткода
+
+Утилита javap позволяет увидеть, во что компилятор Java превратил исходный код.
+
+Пример:
+
+```java
+public class Calc {
+    public static int sum(int a, int b) {
+        return a + b;
+    }
+
+    public static void main(String[] args) {
+        System.out.println(sum(2, 3));
+    }
+}
+```
+
+Компиляция и дизассемблирование:
+```bash
+javac Calc.java
+javap -c Calc
+```
+
+Результат (обрезанный):
+```java
+public static int sum(int, int);
+  Code:
+     0: iload_0
+     1: iload_1
+     2: iadd
+     3: ireturn
+
+public static void main(java.lang.String[]);
+  Code:
+     0: iconst_2
+     1: iconst_3
+     2: invokestatic #2 // Method sum:(II)I
+     5: getstatic #3    // Field java/lang/System.out:Ljava/io/PrintStream;
+     8: invokevirtual #4 // Method java/io/PrintStream.println:(I)V
+```
+Сразу видим байткод инструкций (`iload_0`, `iadd`, `ireturn`), ссылки в constant pool (`#2`, `#3`, `#4`).
+
+### jcmd — универсальный инструмент диагностики
+
+`jcmd` умеет многое: от информации о JVM до создания heap dump. Пример использования:
+
+```bash
+jcmd <pid> VM.flags          # Параметры запуска JVM
+jcmd <pid> Thread.print      # Снимок потоков (thread dump)
+jcmd <pid> GC.heap_info      # Информация о куче
+jcmd <pid> GC.run            # Запустить сборку мусора
+jcmd <pid> GC.heap_dump file=heap.hprof   # Снять heap dump
+```
+
+Здесь `<pid>` - это PID процесса, найденный с помощью `jcmd`.
+
+### jmap — работа с кучей
+
+Утилита `jmap` показывает состояние памяти и позволяет снять дамп:
+
+```bash
+jmap -heap <pid>     # информация о heap (размеры, GC)
+jmap -histo <pid>    # топ объектов по количеству/размеру
+jmap -dump:live,format=b,file=heap.hprof <pid>  # heap dump
+```
+
+Файл `.hprof` потом можно открыть в VisualVM, Eclipse MAT или YourKit.
+
+### jstack — анализ потоков
+
+Чтобы понять, что делают потоки внутри JVM, используется `jstack`:
+
+```bash
+jstack <pid> > threaddump.txt
+```
+
+В дампе потоков можно увидеть:
+
+- Состояние потоков (`RUNNABLE`, `WAITING`, `BLOCKED`);
+- Deadlock (JVM его сама помечает в конце дампа);
+- Stack trace методов.
+
+### jconsole / VisualVM
+
+**jconsole** — простая GUI-утилита, входит в JDK. Позволяет следить за heap, потоками, GC в реальном времени. **VisualVM** — более мощный инструмент: heap dump, профилирование, плагины (например, анализ GC, CPU sampler).
+
+Запуск VisualVM:
+
+```bash
+jvisualvm
+```
+
+### Современные профилировщики
+
+- **Java Flight Recorder (JFR)** — встроенный в JVM профилировщик. Работает с низкими overhead, подходит для продакшена.
+- **Async-profiler** — внешний инструмент, умеет строить flame graph.
+- **YourKit**, **JProfiler** — коммерческие продукты с удобным GUI.
+
+Пример запуска JFR:
+```bash
+jcmd <pid> JFR.start name=myrecord settings=profile filename=recording.jfr
+# ... дать поработать приложению ...
+jcmd <pid> JFR.stop name=myrecord
+```
+Файл `recording.jfr` можно открыть в **Java Mission Control**.
+
+## Заключение
+
+JVM — это не просто «черный ящик», который исполняет Java-код. Это целая экосистема из взаимосвязанных подсистем:
+
+- **ClassLoader Subsystem** отвечает за загрузку классов и изоляцию типов.
+- **Runtime Data Areas** управляют памятью: куча, стеки, Metaspace.
+- **Execution Engine** интерпретирует байткод и применяет JIT-компиляцию для ускорения.
+- **GC и память** обеспечивают автоматическое управление объектами.
+- **Инструменты** (`jcmd`, `jmap`, `jstack`, VisualVM, JFR) позволяют наблюдать и диагностировать JVM в реальном времени.
+
+Почему это важно? Понимание работы Heap и JIT позволяет правильно тюнить сборщик мусора и избегать «тормозов» в продакшене. Знание устройства JVM помогает быстрее отлаживать ошибки вроде `OutOfMemoryError`, `StackOverflowError`, `ClassNotFoundException` или `VerifyError`. А понимание того, как работают ClassLoader и Metaspace, открывает дорогу к созданию плагинных систем, модульных приложений и гибкому управлению зависимостями.
+
+Понимание JVM Internals — это не академическая теория, а практический инструмент. Это база, без которой сложно эффективно отлаживать, оптимизировать и проектировать Java-приложения.
