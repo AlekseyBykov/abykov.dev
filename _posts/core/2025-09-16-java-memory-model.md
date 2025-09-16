@@ -284,19 +284,25 @@ JMM вводит специальное правило: **happens-before**. Ес
 
 ### Основные случаи happens-before
 
+JMM дает набор правил, которые говорят компилятору и процессору: *"эти действия нельзя переставлять местами, и результаты должны быть видны другим потокам"*. Это не про Java как язык, а именно про **барьеры оптимизаций и кешей**. По сути, это набор синхронизационных точек, с которыми процессор и компилятор обязаны считаться. Без них они могли бы переставить инструкции и сломать логику многопоточного кода.
+
 #### Program order rule
-- В одном потоке действия идут в порядке программы.
-- Если в коде `a=1; b=2;`, то для этого потока `a=1` happens-before `b=2`.
-- Но для других потоков это не гарантируется (им нужно правило видимости через `volatile`, `synchronized` и тп).
+
+В одном потоке действия выполняются в порядке программы. Если написать:
+```java
+a = 1;
+b = 2;
+```
+То поток гарантированно сначала присвоит `a=1`, потом `b=2`, но для других потоков это не гарантируется. Чтобы они увидели изменения в правильном порядке, нужны `volatile`, `synchronized` или другие правила.
 
 #### Monitor lock rule
 
 Unlock на мониторе happens-before последующему lock на том же мониторе. Пример:
 ```java
-synchronized(lock) { shared = 10; } // unlock
+synchronized(lock) { shared = 10; } // unlock произойдет при выходе
 synchronized(lock) { System.out.println(shared); } // lock
 ```
-Здесь гарантировано увидим 10.
+Второй блок обязательно увидит 10, потому что выход из первого синхронизированного блока сбрасывает изменения в память.
 
 #### Volatile variable rule
 
@@ -312,19 +318,19 @@ if (flag) { ... } // чтение
 
 Вызов `Thread.start()` на потоке `T` happens-before любому действию в потоке `T`.
 ```java
-t.start();  // happens-before перед run() в новом потоке
+t.start();  // гарантировано доходит до run()
 ```
 
 #### Thread termination rule
 
 Все действия в потоке `T` happen-before успешному возврату из `T.join()` в другом потоке.
 ```java
-t.join(); // happens-before после завершения t
+t.join(); // // гарантирует, что все из потока t завершилось
 ```
 
 #### Interruption rule
 
-Вызов `t.interrupt()` happens-before обнаружению прерывания (через `isInterrupted()` или `InterruptedException`).
+Вызов `t.interrupt()` happens-before моменту, когда поток замечает прерывание (через `isInterrupted()` или `InterruptedException`).
 
 #### Finalizer rule
 
@@ -344,10 +350,10 @@ class Singleton {
     private Singleton() {}
 
     public static Singleton getInstance() {
-        if (instance == null) {                 // (1)
+        if (instance == null) {
             synchronized (Singleton.class) {
-                if (instance == null) {         // (2)
-                    instance = new Singleton(); // (3)
+                if (instance == null) {
+                    instance = new Singleton();
                 }
             }
         }
@@ -356,10 +362,14 @@ class Singleton {
 }
 ```
 
-Почему нужен `volatile`?
+Почему нужен `volatile`? Поскольку `new Singleton()` на байткоде может быть развернута в:
+- Выделение памяти (1);
+- Присвоение ссылки `instance` (2);
+- Вызов конструктора (3).
 
-- Без него другой поток может увидеть ссылку на `instance`, указывающую на недостроенный объект (частично инициализированный).
-- С `volatile` запись в `instance` happens-before ее чтения, и объект гарантированно корректен.
+JMM может переставить шаги 2 и 3. В итоге другой поток может увидеть `instance != null`, но объект еще не проинициализирован.
+
+С `volatile` запись в `instance` happens-before ее чтения, и объект гарантированно корректен.
 
 ### Итоги по reordering
 
@@ -492,4 +502,86 @@ public class AtomicDemo {
 1. **Spinning (ожидание в цикле)**. Если несколько потоков постоянно конфликтуют, CAS будет многократно пробовать обновить значение, тратя CPU.
 2. **ABA-проблема**. Значение изменилось `A`→`B`→`A`. CAS не заметит, что что-то произошло. Для этого в Java есть `AtomicStampedReference` (с версией).
 
+## ThreadLocal — память «на поток»
 
+Вместо того, чтобы синхронизировать доступ к переменной между потоками, иногда проще сделать так, чтобы у каждого потока была своя копия этой переменной. Для этого в Java есть класс `ThreadLocal`.
+
+### Пример без ThreadLocal
+```java
+public class NoThreadLocalDemo {
+
+    private static int counter = 0;
+
+    public static void main(String[] args) throws InterruptedException {
+        Runnable task = () -> {
+            counter++;
+            System.out.println(Thread.currentThread().getName() + " -> " + counter);
+        };
+
+        Thread t1 = new Thread(task, "T1");
+        Thread t2 = new Thread(task, "T2");
+
+        t1.start();
+        t2.start();
+
+        t1.join();
+        t2.join();
+    }
+}
+```
+Результат может быть непредсказуемым: два потока меняют один и тот же `counter`.
+
+### Пример с ThreadLocal
+
+```java
+public class ThreadLocalDemo {
+    private static final ThreadLocal<Integer> counter =
+            ThreadLocal.withInitial(() -> 0);
+
+    public static void main(String[] args) throws InterruptedException {
+        Runnable task = () -> {
+            int value = counter.get();
+            
+            counter.set(value + 1);
+            
+            System.out.println(
+                Thread.currentThread().getName() + " -> " + counter.get()
+            );
+        };
+
+        Thread t1 = new Thread(task, "T1");
+        Thread t2 = new Thread(task, "T2");
+
+        t1.start();
+        t2.start();
+
+        t1.join();
+        t2.join();
+    }
+}
+```
+Вывод всегда будет:
+```text
+T1 -> 1
+T2 -> 1
+```
+
+У каждого потока — **своя копия** `counter`, никаких гонок.
+
+Где это применяют:
+- Хранение контекста (например, `SecurityContext`, `UserSession`, `Transaction`).
+- Форматирование дат (`DateFormat` раньше был не потокобезопасен).
+- Генерация `traceId`/`logId` для логов.
+
+### Важный нюанс: утечки памяти
+
+`ThreadLocal` хранит данные в карте внутри `Thread`. Если поток живет долго (например, из пула), то и данные остаются. Нужно вызывать `remove()`, чтобы не было утечек.
+
+```java
+try {
+    counter.set(42);
+    // работа с потоком
+} finally {
+    counter.remove(); // обязательно
+}
+```
