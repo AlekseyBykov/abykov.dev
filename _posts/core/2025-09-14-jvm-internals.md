@@ -1,9 +1,9 @@
 ---
 layout: post
-title: "JVM Internals: Полный разбор с примерами"
+title: "JVM Internals: Обзор и примеры"
 date: 2025-09-14
 categories: [java, java-core]
-tags: [jvm, internals, classloader, jit, gc]
+tags: [java, jvm, internals, memory, gc, deadlock, mat, jconsole]
 ---
 
 **Java Virtual Machine (JVM)** — это ядро платформы Java. Когда мы запускаем программу, JVM берет на себя задачу загрузки классов, управления памятью, интерпретации или компиляции байткода, а также обеспечивает безопасность и кроссплатформенность. Чтобы понимать, как работает Java «под капотом», нужно заглянуть в устройство JVM и разобраться в ее подсистемах.
@@ -1162,6 +1162,78 @@ Eclipse MAT также генерирует отчет *Leak Suspects Report*. �
 Такой отчет часто указывает не только на удерживающий объект, но и на конкретный участок кода, 
 что существенно ускоряет поиск утечки в реальных приложениях.
 
+### Deadlock
+
+Взаимная блокировка (deadlock) возникает, когда два потока ждут друг друга, удерживая разные ресурсы.  
+
+Пример:
+```java
+public class DeadlockSimulator {
+
+    private static final Object lock1 = new Object();
+    private static final Object lock2 = new Object();
+
+    public static void run() {
+        Thread t1 = new Thread(() -> {
+            synchronized (lock1) {
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException ignored) {
+                }
+
+                synchronized (lock2) {
+                }
+            }
+        });
+
+        Thread t2 = new Thread(() -> {
+            synchronized (lock2) {
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException ignored) {
+                }
+
+                synchronized (lock1) {
+                }
+            }
+        });
+
+        t1.start();
+        t2.start();
+    }
+}
+```
+
+В JConsole на вкладке Threads видно, что оба потока находятся в состоянии `BLOCKED`. Один удерживает `lock1` и ждет `lock2`. 
+
+![jconsole deadlock](/assets/img/javacore/jconsole-dlock-demo-1.png){: .shadow .rounded }
+
+Другой поток удерживает `lock2` и ждет `lock1`.
+
+![jconsole deadlock](/assets/img/javacore/jconsole-dlock-demo-2.png){: .shadow .rounded }
+
+Такой цикл ожидания называется deadlock. JVM не может его сама разрешить, и приложение зависает.
+
+При deadlock heap ведет себя иначе: на графике видно нормальную пилу работы GC (объекты создаются и очищаются), но два потока остаются в состоянии `BLOCKED`.
+
+![jconsole deadlock](/assets/img/javacore/jconsole-dlock-demo-3.png){: .shadow .rounded }
+
+1. **Heap Memory Usage (верхний левый график)**
+Здесь уже не рост до упора, как в примере с `MemoryLeakSimulator`, а характерная пилообразная кривая: объекты создаются, GC их периодически собирает, и heap очищается. Это нормальная работа GC без утечки.
+
+2. **Threads (верхний правый)**
+Видно ~18 потоков, часть которых зависла (наш deadlock), остальные живы. Число потоков стабильное, но пара штук остается заблокированной.
+
+3. **Classes (нижний левый)**
+Классы загрузились один раз (около 2500) и дальше не менялись. Нет роста, утечки классов нет.
+
+4. **CPU Usage (нижний правый)**
+Нагрузка минимальна, в отличие от сценариев с busy loop или высоким GC overhead.
+
+Таким образом, по мониторингу можно отличить взаимную блокировку от утечки памяти:  
+- При утечке — линейный рост heap до OOM;  
+- При deadlock — heap работает нормально, но приложение зависает из-за застрявших потоков.
+
 
 ## Заключение
 
@@ -1176,3 +1248,4 @@ JVM — это не просто «черный ящик», который ис�
 Почему это важно? Понимание работы Heap и JIT позволяет правильно тюнить сборщик мусора и избегать «тормозов» в продакшене. Знание устройства JVM помогает быстрее отлаживать ошибки вроде `OutOfMemoryError`, `StackOverflowError`, `ClassNotFoundException` или `VerifyError`. А понимание того, как работают ClassLoader и Metaspace, открывает дорогу к созданию плагинных систем, модульных приложений и гибкому управлению зависимостями.
 
 Понимание JVM Internals — это не академическая теория, а практический инструмент. Это база, без которой сложно эффективно отлаживать, оптимизировать и проектировать Java-приложения.
+
