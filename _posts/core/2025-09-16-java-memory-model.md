@@ -367,3 +367,129 @@ class Singleton {
 - JMM задает четкие правила happens-before.
 - `volatile` и `synchronized` создают барьеры памяти, которые запрещают reorder.
 - Если в коде нет отношений happens-before — результат непредсказуем.
+
+## Final и конструкторы
+
+У `final` полей в Java есть **особая гарантия видимости**: если объект корректно сконструирован и ссылка на него передана другому потоку, то этот поток гарантированно увидит правильные значения `final` полей.
+
+Пример:
+```java
+class Holder {
+    final int value;
+
+    Holder(int v) {
+        this.value = v;
+    }
+}
+
+public class FinalDemo {
+    static Holder holder;
+
+    public static void main(String[] args) throws InterruptedException {
+        Thread writer = new Thread(() -> {
+            holder = new Holder(22); // конструктор завершен
+        });
+
+        Thread reader = new Thread(() -> {
+            while (holder == null) {}
+            System.out.println(holder.value); // всегда 22
+        });
+
+        writer.start();
+        reader.start();
+
+        writer.join();
+        reader.join();
+    }
+}
+```
+Здесь поток `reader` всегда напечатает `22`. Даже если нет `volatile` или `synchronized`, JMM гарантирует, что `final` поля будут корректно видны.
+
+### Когда это ломается
+
+Если объект утекает до завершения конструктора, гарантии теряются:
+```java
+class BrokenHolder {
+    final int value;
+
+    static BrokenHolder leaked;
+
+    BrokenHolder(int v) {
+        leaked = this;     // утечка "this" из конструктора
+        this.value = v;
+    }
+}
+```
+Теперь другой поток может получить ссылку на объект через `leaked`, но его поле `value` еще не инициализировано. Результат: `0` вместо ожидаемого значения.
+
+### Вывод
+
+- `final` в Java играет роль не только "нельзя поменять", но и добавляет гарантию видимости.
+- Если объект создан корректно (без утечки `this`), то другие потоки увидят `final` поля проинициализированными.
+- Если объект утекает в процессе конструктора, то никакой гарантии нет.
+
+
+## CAS и атомарные классы
+
+До сих пор мы говорили про `volatile` и `synchronized`. Но начиная с **Java 5** в стандартной библиотеке появился пакет `java.util.concurrent.atomic`, который предлагает более быстрые неблокирующие примитивы.
+
+В их основе лежит техника **CAS (compare-and-swap)**.
+
+### Что такое CAS
+
+CAS — это атомарная операция на уровне процессора. Она делает следующее:
+
+```text
+compare-and-swap(адрес, ожидаемое_значение, новое_значение)
+```
+
+- если по адресу лежит `ожидаемое_значение`, то записываем `новое_значение` и возвращаем `true`;
+- если нет — ничего не меняем и возвращаем `false`.
+
+Пример с `AtomicInteger`:
+```java
+import java.util.concurrent.atomic.AtomicInteger;
+
+public class AtomicDemo {
+
+    private static final AtomicInteger counter = new AtomicInteger(0);
+
+    public static void main(String[] args) throws InterruptedException {
+        Runnable task = () -> {
+            for (int i = 0; i < 1000; i++) {
+                counter.incrementAndGet(); // атомарное ++
+            }
+        };
+
+        Thread t1 = new Thread(task);
+        Thread t2 = new Thread(task);
+
+        t1.start(); 
+        t2.start();
+
+        t1.join(); 
+        t2.join();
+
+        System.out.println("Result: " + counter.get()); // всегда 2000
+    }
+}
+```
+Метод `incrementAndGet()` внутри использует CAS, а не `synchronized`.
+
+#### CAS vs synchronized
+
+- **CAS**:
+  - Не блокирует поток — работает быстрее при низком конфликте;
+  - Хорош для простых операций (`++`, `setIfAbsent` и тп);
+  - Используется во многих коллекциях (`ConcurrentHashMap`).
+
+- **synchronized**:
+  - Блокирует поток — может быть медленнее;
+  - Зато подходит для сложных критических секций (несколько полей, логика).
+
+#### Потенциальные минусы CAS
+
+1. **Spinning (ожидание в цикле)**. Если несколько потоков постоянно конфликтуют, CAS будет многократно пробовать обновить значение, тратя CPU.
+2. **ABA-проблема**. Значение изменилось `A`→`B`→`A`. CAS не заметит, что что-то произошло. Для этого в Java есть `AtomicStampedReference` (с версией).
+
+
