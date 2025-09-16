@@ -585,3 +585,59 @@ try {
     counter.remove(); // обязательно
 }
 ```
+
+## Инструменты диагностики многопоточности
+
+Даже если мы знаем правила JMM, на практике отладка проблем многопоточности остается сложной задачей. Но у нас есть инструменты.
+
+### jconsole / VisualVM
+
+Позволяют следить за потоками, состоянием heap, GC. Можно увидеть deadlock’и: блокировки потоков подсвечиваются автоматически. Хороши для живой диагностики.
+
+### jstack
+
+Делает thread dump — снимок всех потоков. Показывает, какие методы выполняются, где потоки заблокированы. Идеально для анализа зависаний и дедлоков.
+
+Пример запуска:
+```bash
+jstack <pid> > threaddump.txt
+```
+
+### JCStress
+
+Специальный инструмент от OpenJDK для тестирования многопоточных сценариев. Генерирует тысячи запусков с разными порядками выполнения потоков. Позволяет выявить баги, связанные с reorder и видимостью.
+
+Пример теста:
+```java
+import org.openjdk.jcstress.annotations.*;
+import org.openjdk.jcstress.infra.results.II_Result;
+
+@JCStressTest
+@Outcome(id = "0, 1", expect = Expect.ACCEPTABLE)
+@Outcome(id = "1, 0", expect = Expect.ACCEPTABLE)
+@Outcome(id = "1, 1", expect = Expect.ACCEPTABLE)
+@Outcome(id = "0, 0", expect = Expect.FORBIDDEN, desc = "Reordering happened!")
+@State
+public class ReorderingTest {
+
+    int a = 0, b = 0;
+
+    @Actor
+    public void actor1(II_Result r) {
+        a = 1;
+        r.r1 = b;
+    }
+
+    @Actor
+    public void actor2(II_Result r) {
+        b = 1;
+        r.r2 = a;
+    }
+}
+```
+### Advanced tools
+
+- **Java Flight Recorder (JFR) + Mission Control** — продвинутая профилировка потоков.
+- **IntelliJ Concurrency Visualizer** (плагин) — показывает, как работают потоки и где блокируются.
+- **Linux perf + async-profiler** — для глубокой диагностики на проде.
+
