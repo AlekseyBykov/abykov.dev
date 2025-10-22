@@ -334,6 +334,12 @@ exit 0
 sudo chmod +x /usr/local/bin/vpn-down
 ```
 
+Уведомления будут иметь вид:
+
+![VPN уже подключен](/assets/img/vpn-active.png){: .shadow .rounded }
+![Туннель закрыт](/assets/img/vpn-disconnected.png){: .shadow .rounded }
+![VPN уже отключен](/assets/img/vpn-off.png){: .shadow .rounded }
+
 Теперь наше подключение выглядит профессионально: уведомления, лог, защита от повторного запуска.
 
 ## Итог
@@ -351,7 +357,7 @@ sudo chmod +x /usr/local/bin/vpn-down
 
 ---
 
-### Команды
+Команды:
 
 | Команда | Назначение |
 |----------|------------|
