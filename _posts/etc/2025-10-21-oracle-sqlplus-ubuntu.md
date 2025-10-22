@@ -1,7 +1,7 @@
 ---
 title: "SQL*Plus на Ubuntu: полный рабочий сетап через Oracle Instant Client"
 layout: post
-date: 2025-10-21 12:00:00 +0300
+date: 2025-10-22 22:00:00 +0300
 categories: [oracle, linux, devops]
 tags: [sqlplus, oracle, ubuntu, database, tooling]
 ---
