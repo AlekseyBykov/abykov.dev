@@ -1,9 +1,84 @@
 ---
 layout: page
-title: Live demos
-permalink: /demos/
+title: CV
+permalink: /cv/
 ---
 
-Здесь собраны онлайн-демо:
+## Опыт
+<div class="timeline">
+    <div class="timeline-item">
+        <div class="timeline-date">2019 – н.в.</div>
+        <div class="timeline-content">Java Developer — государственная финансовая система (финтех, enterprise)</div>
+    </div>
+    <div class="timeline-item">
+        <div class="timeline-date">2007 – 2019</div>
+        <div class="timeline-content">Java Developer — корпоративные системы и интеграционные решения</div>
+    </div>
+    <div class="timeline-item">
+        <div class="timeline-date">2006 – 2007</div>
+        <div class="timeline-content">Инженер АСУТП — промышленная автоматизация (нефтехимия)</div>
+    </div>
+</div>
 
-- [Weather Map Demo](https://weather.abykov.dev) — интерактивная карта прогноза погоды.
+
+## Образование
+<div class="timeline">
+    <div class="timeline-item">
+        <div class="timeline-date">2025 – н.в.</div>
+        <div class="timeline-content"><strong>Московский технологический институт (МТИ)</strong><br>Прикладная информатика<br>Специализация: интернет-технологии и мобильные приложения</div>
+    </div>
+    <div class="timeline-item">
+        <div class="timeline-date">2025 – 2026</div>
+        <div class="timeline-content"><strong>Московский технологический институт (МТИ)</strong><br>Дополнительное профессиональное образование<br>Программа: Информационные системы в бизнес-процессах</div>
+    </div>
+    <div class="timeline-item">
+        <div class="timeline-date">2010 – 2013</div>
+        <div class="timeline-content"><strong>Самарский государственный технический университет (СамГТУ)</strong><br>Вычислительные машины, комплексы, системы и сети<br>Статус: незаконченное высшее</div>
+    </div>
+    <div class="timeline-item">
+        <div class="timeline-date">2002 – 2007</div>
+        <div class="timeline-content"><strong>Самарский государственный технический университет (СамГТУ)</strong><br>Автоматизация технологических процессов и производств<br>Квалификация: инженер АСУТП</div>
+    </div>
+</div>
+
+## Сертификаты
+
+- [Java Developer — CyberBionic Systematics (TestProvider/UCC), 2019](https://github.com/AlekseyBykov/certificates/blob/master/TP23350996.pdf)
+- [Java Programming — Национальный открытый университет «ИНТУИТ», 2020](https://github.com/AlekseyBykov/certificates/blob/master/INOU101371246EN.pdf)
+- [Spring 4.0 — Brainbench, 2020](https://github.com/AlekseyBykov/certificates/blob/master/BB14241688.pdf)
+- [Master Microservices with Spring Boot and Spring Cloud — Udemy, 2025](https://github.com/AlekseyBykov/certificates/blob/master/UC-e3a98561-eec8-4739-ba28-0b22685b0c01.pdf)
+- [Java Intermediate — GeekBrains, 2025](https://github.com/AlekseyBykov/certificates/blob/master/java-gb.en.pdf)
+- [ООП (Теория) — Минцифры РФ, Национальная система оценки ИТ-компетенций, 2025](https://github.com/AlekseyBykov/certificates/blob/master/%D0%9E%D0%9E%D0%9F.pdf)
+
+
+<style>
+.timeline {
+  position: relative;
+  margin: 20px 0 30px 0;
+  padding-left: 30px;
+  border-left: 2px solid #d0d0d0;
+}
+.timeline-item {
+  position: relative;
+  margin-bottom: 20px;
+  padding-left: 10px;
+}
+.timeline-item::before {
+  content: "";
+  position: absolute;
+  left: -11px;
+  top: 4px;
+  width: 10px;
+  height: 10px;
+  background: #fff;
+  border: 2px solid #555;
+  border-radius: 50%;
+}
+.timeline-date {
+  font-weight: bold;
+  color: #333;
+}
+.timeline-content {
+  font-size: 15px;
+}
+</style>
