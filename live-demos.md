@@ -12,7 +12,7 @@ permalink: /cv/
     </div>
     <div class="timeline-item">
         <div class="timeline-date">2007 – 2019</div>
-        <div class="timeline-content">Java Developer — корпоративные системы и интеграционные решения</div>
+        <div class="timeline-content">Software engineer — корпоративные системы и интеграционные решения</div>
     </div>
     <div class="timeline-item">
         <div class="timeline-date">2006 – 2007</div>
@@ -50,6 +50,9 @@ permalink: /cv/
 - [Java Intermediate — GeekBrains, 2025](https://github.com/AlekseyBykov/certificates/blob/master/java-gb.en.pdf)
 - [ООП (Теория) — Минцифры РФ, Национальная система оценки ИТ-компетенций, 2025](https://github.com/AlekseyBykov/certificates/blob/master/%D0%9E%D0%9E%D0%9F.pdf)
 
+## Awards
+
+- [Почетная грамота «ВолгаИнформСеть», Отдел системных проектов, 2014](https://github.com/AlekseyBykov/certificates/blob/master/Award-VIS-2014.pdf)
 
 <style>
 .timeline {
