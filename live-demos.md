@@ -8,7 +8,7 @@ permalink: /cv/
 <div class="timeline">
     <div class="timeline-item">
         <div class="timeline-date">2019 – н.в.</div>
-        <div class="timeline-content">Software engineer — государственная финансовая система (финтех, enterprise)</div>
+        <div class="timeline-content">Software engineer — государственная финансовая информационная система</div>
     </div>
     <div class="timeline-item">
         <div class="timeline-date">2007 – 2019</div>
@@ -16,7 +16,7 @@ permalink: /cv/
     </div>
     <div class="timeline-item">
         <div class="timeline-date">2006 – 2007</div>
-        <div class="timeline-content">Инженер АСУТП — промышленная автоматизация, SCADA/HMI, промышленные контроллеры</div>
+        <div class="timeline-content">Инженер АСУТП — промышленная автоматизация, SCADA/HMI, контроллеры</div>
     </div>
 </div>
 
@@ -55,6 +55,10 @@ permalink: /cv/
 - [Master Microservices with Spring Boot and Spring Cloud — Udemy, 2025](https://github.com/AlekseyBykov/certificates/blob/master/UC-e3a98561-eec8-4739-ba28-0b22685b0c01.pdf)
 - [Java Intermediate — GeekBrains, 2025](https://github.com/AlekseyBykov/certificates/blob/master/java-gb.en.pdf)
 - [ООП (Теория) — Минцифры РФ, Национальная система оценки ИТ-компетенций, 2025](https://github.com/AlekseyBykov/certificates/blob/master/%D0%9E%D0%9E%D0%9F.pdf)
+
+## Публикации
+
+- [Микропроцессорный канал обработки информации — Сборник научных трудов, СамГТУ, 2005](https://github.com/AlekseyBykov/certificates/blob/master/publication-fragment-2005-bykov.pdf)
 
 ## Awards
 
