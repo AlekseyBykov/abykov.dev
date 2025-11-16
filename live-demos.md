@@ -8,7 +8,7 @@ permalink: /cv/
 <div class="timeline">
     <div class="timeline-item">
         <div class="timeline-date">2019 – н.в.</div>
-        <div class="timeline-content">Java Developer — государственная финансовая система (финтех, enterprise)</div>
+        <div class="timeline-content">Software engineer — государственная финансовая система (финтех, enterprise)</div>
     </div>
     <div class="timeline-item">
         <div class="timeline-date">2007 – 2019</div>
@@ -16,7 +16,7 @@ permalink: /cv/
     </div>
     <div class="timeline-item">
         <div class="timeline-date">2006 – 2007</div>
-        <div class="timeline-content">Инженер АСУТП — промышленная автоматизация (нефтехимия)</div>
+        <div class="timeline-content">Инженер АСУТП — промышленная автоматизация, SCADA/HMI, промышленные контроллеры</div>
     </div>
 </div>
 
@@ -25,19 +25,25 @@ permalink: /cv/
 <div class="timeline">
     <div class="timeline-item">
         <div class="timeline-date">2025 – н.в.</div>
-        <div class="timeline-content"><strong>Московский технологический институт (МТИ)</strong><br>Прикладная информатика<br>Специализация: интернет-технологии и мобильные приложения</div>
+        <div class="timeline-content"><strong>Московский технологический институт (МТИ)</strong><br>Прикладная информатика<br>Интернет-технологии и мобильные приложения</div>
     </div>
     <div class="timeline-item">
         <div class="timeline-date">2025 – 2026</div>
-        <div class="timeline-content"><strong>Московский технологический институт (МТИ)</strong><br>Дополнительное профессиональное образование<br>Программа: Информационные системы в бизнес-процессах</div>
+        <div class="timeline-content"><strong>Московский технологический институт (МТИ)</strong>
+        <br>Дополнительное профессиональное образование
+            <ul>
+                <li>Технологии разработки и тестирования программного обеспечения</li>
+                <li>Информационные системы в бизнес-процессах</li>
+            </ul>
+        </div>
     </div>
     <div class="timeline-item">
         <div class="timeline-date">2010 – 2013</div>
-        <div class="timeline-content"><strong>Самарский государственный технический университет (СамГТУ)</strong><br>Вычислительные машины, комплексы, системы и сети<br>Статус: незаконченное высшее</div>
+        <div class="timeline-content"><strong>Самарский государственный технический университет (СамГТУ)</strong><br>Вычислительные машины, комплексы, системы и сети<br>Неполное высшее</div>
     </div>
     <div class="timeline-item">
         <div class="timeline-date">2002 – 2007</div>
-        <div class="timeline-content"><strong>Самарский государственный технический университет (СамГТУ)</strong><br>Автоматизация технологических процессов и производств<br>Квалификация: инженер АСУТП</div>
+        <div class="timeline-content"><strong>Самарский государственный технический университет (СамГТУ)</strong><br>Автоматизация технологических процессов и производств<br>Инженер АСУТП</div>
     </div>
 </div>
 
