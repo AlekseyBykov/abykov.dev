@@ -8,7 +8,7 @@ permalink: /cv/
 <div class="timeline">
     <div class="timeline-item">
         <div class="timeline-date">2019 – н.в.</div>
-        <div class="timeline-content">Software engineer — государственная финансовая информационная система</div>
+        <div class="timeline-content">Software engineer — финансовая информационная система</div>
     </div>
     <div class="timeline-item">
         <div class="timeline-date">2007 – 2019</div>
@@ -25,16 +25,26 @@ permalink: /cv/
 <div class="timeline">
     <div class="timeline-item">
         <div class="timeline-date">2025 – н.в.</div>
-        <div class="timeline-content"><strong>Московский технологический институт (МТИ)</strong><br>Прикладная информатика<br>Интернет-технологии и мобильные приложения</div>
+        <div class="timeline-content">
+            <strong>Московский технологический институт (МТИ)</strong><br>
+            Прикладная информатика<br>
+            Интернет-технологии и мобильные приложения
+        </div>
     </div>
     <div class="timeline-item">
         <div class="timeline-date">2025 – 2026</div>
-        <div class="timeline-content"><strong>Московский технологический институт (МТИ)</strong>
-        <br>Дополнительное профессиональное образование
-            <ul>
-                <li>Технологии разработки и тестирования программного обеспечения</li>
-                <li>Информационные системы в бизнес-процессах</li>
-            </ul>
+        <div class="timeline-content">
+            <strong>Московский технологический институт (МТИ)</strong><br>
+            Дополнительное профессиональное образование<br>
+            Технологии разработки и тестирования программного обеспечения
+        </div>
+    </div>
+    <div class="timeline-item">
+        <div class="timeline-date">2025 – 2026</div>
+        <div class="timeline-content">
+            <strong>Московский технологический институт (МТИ)</strong><br>
+            Дополнительное профессиональное образование<br>
+            Информационные системы в бизнес-процессах
         </div>
     </div>
     <div class="timeline-item">
