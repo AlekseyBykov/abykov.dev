@@ -16,7 +16,7 @@ permalink: /cv/
     </div>
     <div class="timeline-item">
         <div class="timeline-date">2006 – 2007</div>
-        <div class="timeline-content">Инженер АСУТП — промышленная автоматизация, SCADA/HMI, контроллеры</div>
+        <div class="timeline-content">Инженер АСУТП — промышленная автоматизация, SCADA/HMI, ПЛК</div>
     </div>
 </div>
 
@@ -26,53 +26,56 @@ permalink: /cv/
     <div class="timeline-item">
         <div class="timeline-date">2025 – н.в.</div>
         <div class="timeline-content">
-            <strong>Московский технологический институт (МТИ)</strong><br>
-            Прикладная информатика<br>
-            Интернет-технологии и мобильные приложения
+            <strong>Московский технологический институт</strong><br>
+            Прикладная информатика
         </div>
     </div>
+
     <div class="timeline-item">
         <div class="timeline-date">2025 – 2026</div>
         <div class="timeline-content">
-            <strong>Московский технологический институт (МТИ)</strong><br>
+            <strong>Московский технологический институт</strong><br>
             Дополнительное профессиональное образование<br>
-            Технологии разработки и тестирования программного обеспечения
+            • разработка и тестирование ПО<br>
+            • информационные системы в бизнес-процессах
         </div>
     </div>
-    <div class="timeline-item">
-        <div class="timeline-date">2025 – 2026</div>
-        <div class="timeline-content">
-            <strong>Московский технологический институт (МТИ)</strong><br>
-            Дополнительное профессиональное образование<br>
-            Информационные системы в бизнес-процессах
-        </div>
-    </div>
+
+
     <div class="timeline-item">
         <div class="timeline-date">2010 – 2013</div>
-        <div class="timeline-content"><strong>Самарский государственный технический университет (СамГТУ)</strong><br>Вычислительные машины, комплексы, системы и сети<br>Неполное высшее</div>
+        <div class="timeline-content">
+            <strong>Самарский государственный технический университет</strong><br>
+            Вычислительные машины, комплексы, системы и сети (неполное высшее)
+        </div>
     </div>
+
     <div class="timeline-item">
         <div class="timeline-date">2002 – 2007</div>
-        <div class="timeline-content"><strong>Самарский государственный технический университет (СамГТУ)</strong><br>Автоматизация технологических процессов и производств<br>Инженер АСУТП</div>
+        <div class="timeline-content">
+            <strong>Самарский государственный технический университет</strong><br>
+            Автоматизация технологических процессов и производств
+        </div>
     </div>
 </div>
 
+
 ## Сертификаты
 
-- [Java Developer — CyberBionic Systematics (TestProvider/UCC), 2019](https://github.com/AlekseyBykov/certificates/blob/master/TP23350996.pdf)
-- [Java Programming — Национальный открытый университет «ИНТУИТ», 2020](https://github.com/AlekseyBykov/certificates/blob/master/INOU101371246EN.pdf)
+- [Java Developer — CyberBionic Systematics, 2019](https://github.com/AlekseyBykov/certificates/blob/master/TP23350996.pdf)
+- [Java Programming — ИНТУИТ, 2020](https://github.com/AlekseyBykov/certificates/blob/master/INOU101371246EN.pdf)
 - [Spring 4.0 — Brainbench, 2020](https://github.com/AlekseyBykov/certificates/blob/master/BB14241688.pdf)
 - [Master Microservices with Spring Boot and Spring Cloud — Udemy, 2025](https://github.com/AlekseyBykov/certificates/blob/master/UC-e3a98561-eec8-4739-ba28-0b22685b0c01.pdf)
 - [Java Intermediate — GeekBrains, 2025](https://github.com/AlekseyBykov/certificates/blob/master/java-gb.en.pdf)
-- [ООП (Теория) — Минцифры РФ, Национальная система оценки ИТ-компетенций, 2025](https://github.com/AlekseyBykov/certificates/blob/master/%D0%9E%D0%9E%D0%9F.pdf)
+- [ООП (теория) — Минцифры РФ, 2025](https://github.com/AlekseyBykov/certificates/blob/master/%D0%9E%D0%9E%D0%9F.pdf)
 
 ## Публикации
 
-- [Микропроцессорный канал обработки информации — Сборник научных трудов, СамГТУ, 2005](https://github.com/AlekseyBykov/certificates/blob/master/publication-fragment-2005-bykov.pdf)
+- [Микропроцессорный канал обработки информации — Сборник научных трудов СамГТУ, 2005](https://github.com/AlekseyBykov/certificates/blob/master/publication-fragment-2005-bykov.pdf)
 
 ## Awards
 
-- [Почетная грамота «ВолгаИнформСеть», Отдел системных проектов, 2014](https://github.com/AlekseyBykov/certificates/blob/master/Award-VIS-2014.pdf)
+- [Почетная грамота «ВолгаИнформСеть», 2014](https://github.com/AlekseyBykov/certificates/blob/master/Award-VIS-2014.pdf)
 
 <style>
 .timeline {
