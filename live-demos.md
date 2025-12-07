@@ -71,7 +71,7 @@ permalink: /cv/
 
 ## Публикации
 
-- [Микропроцессорный канал обработки информации — Сборник научных трудов СамГТУ, 2005](https://github.com/AlekseyBykov/certificates/blob/master/publication-fragment-2005-bykov.pdf)
+- [Микропроцессорный канал обработки информации — Сборник научных трудов СамГТУ, 2004](https://github.com/AlekseyBykov/certificates/blob/master/publication-fragment-2005-bykov.pdf)
 
 ## Awards
 
