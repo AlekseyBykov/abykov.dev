@@ -1,5 +1,5 @@
 ---
-title: "Почему Lombok @SneakyThrows опасен и меняет контракт"
+title: "Неочевидные последствия Lombok @SneakyThrows"
 layout: post
 date: 2025-11-17 20:00:00 +0300
 categories: [java, lombok, architecture]
