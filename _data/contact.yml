@@ -11,12 +11,16 @@
   icon: "fab fa-stack-overflow"
   url: "https://stackoverflow.com/users/29023248/user29023248" # Fill with your stackoverflow homepage
 
+- type: profile
+  icon: "fas fa-user-circle"
+  url: "https://setka.ru/users/019b9805-2ffb-7781-93d4-3de5b287a244"
+
 #- type: twitter
 #  icon: "fa-brands fa-x-twitter"
 
-- type: email
-  icon: "fas fa-envelope"
-  noblank: true # open link in current tab
+#- type: email
+#  icon: "fas fa-envelope"
+#  noblank: true # open link in current tab
 
 # Uncomment and complete the url below to enable more contact options
 #
