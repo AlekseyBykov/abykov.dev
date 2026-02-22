@@ -4,6 +4,7 @@ layout: post
 date: 2025-04-30 12:00:00 +0300
 categories: [GitHub, Блог]
 tags: [jekyll, github-pages, chirpy, ruby, deploy, dns, ssl, github-actions]
+published: false
 ---
 
 В этой статье рассмотрим, как развернуть персональный блог, например `abykov.dev`, на GitHub Pages с использованием
