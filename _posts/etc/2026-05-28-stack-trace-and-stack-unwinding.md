@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Stack trace и stack unwinding"
+title: "Обработка исключений в JVM: stack trace и stack unwinding"
 date: 2026-05-28
 categories: [java, jvm]
 tags: [java, jvm, exceptions, stacktrace, hotspot]
