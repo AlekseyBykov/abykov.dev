@@ -197,28 +197,92 @@ InputStream result = IOUtils.toInputStream(xml, charset);
 
 ### Peek — только чтение
 
-Peek — это этап, на котором поток **только читается**, но не изменяется. Типичный пример — нужно понять, стоит ли вообще что-то делать с документом:
+Peek — это этап, на котором поток **только читается**, но не изменяется. Обычно это нужно, чтобы принять решение о дальнейшей обработке документа.
+
+Простейшая реализация выглядит так:
 
 ```java
-String type = peekTagValue(inputStream, "Type", 8 * 1024);
-if (!"REPORT".equals(type)) {
-    // дальше идем по обычному пути
+public static String peekTagValue(
+        InputStream input,
+        String tagName
+) throws IOException {
+
+    if (!input.markSupported()) {
+        throw new IllegalArgumentException(
+                "InputStream must support mark/reset"
+        );
+    }
+
+    input.mark(8192); // readLimit
+
+    try {
+        return readTagValue(input, tagName);
+    } finally {
+        input.reset();
+    }
 }
 ```
 
-На этом этапе важно одно: поток после peek должен остаться в том же логическом состоянии, в каком он был до него.
+Использование:
 
-Peek не должен модифицировать байты, менять кодировку, создавать новые версии потока или «случайно» продвигать чтение вперед. Если поток был использован для peek — это должно быть осознанное и локальное действие, а не побочный эффект.
+```java
+String type = peekTagValue(inputStream, "Type");
+
+if (!"REPORT".equals(type)) {
+    return;
+}
+```
+
+Во время peek поток действительно читается, но после `reset()` возвращается в исходное положение. Для последующих этапов pipeline это тот же самый поток, как будто чтения вообще не было.
+
+Поэтому задача peek очень проста:
+
+* посмотреть содержимое;
+* принять решение;
+* вернуть поток в исходное состояние.
+
+Peek не должен изменять байты, менять кодировку, создавать новые версии потока или случайно продвигать чтение вперед. Любое изменение состояния потока должно происходить только осознанно и только на boundary.
 
 ### Transform — отдельный шаг
 
 Если после peek становится понятно, что XML нужно изменить, начинается другая задача — **трансформация**. Здесь допустимы только два честных подхода.
 
-Первый — потоковая обработка «байт → байт», когда вход читается последовательно и на выход сразу пишется результат:
+Первый — потоковая обработка «байт → байт», когда вход читается последовательно и по мере чтения формируется новый поток.
+
+Упрощенная схема выглядит так:
+
+```java
+public static InputStream replaceTagValue(
+        InputStream input,
+        String tagName,
+        String newValue,
+        Charset charset
+) throws IOException {
+
+    ByteArrayOutputStream out = new ByteArrayOutputStream();
+
+    while ((b = input.read()) != -1) {
+
+        // читаем входной поток
+
+        if (foundStartTag(tagName)) {
+            skipOldValue();
+            out.write(newValue.getBytes(charset));
+            continue;
+        }
+
+        out.write(b);
+    }
+
+    return new ByteArrayInputStream(out.toByteArray());
+}
+```
+
+Использование:
 
 ```java
 InputStream transformed =
-        XmlStreamReplaceUtils.replaceSimpleTagValue(
+        replaceTagValue(
                 inputStream,
                 "DocKind",
                 "CUSTOM",
@@ -226,17 +290,36 @@ InputStream transformed =
         );
 ```
 
-Второй — явная материализация:
+Второй вариант — явная материализация всего документа:
 
 ```java
 String xml = IOUtils.toString(inputStream, charset);
+
 // изменения
-InputStream transformed = IOUtils.toInputStream(xml, charset);
+
+InputStream transformed =
+        IOUtils.toInputStream(xml, charset);
 ```
 
-Оба варианта допустимы, но старый поток использовать уже нельзя.
+В обоих случаях появляется **новый поток**, содержащий уже измененный документ.
 
-Peek и transform — это разные этапы с разными свойствами и разными рисками.
+Важно понимать, что transform отличается от peek принципиально. Во время peek поток действительно читается, но после `reset()` для последующего кода он выглядит так, как будто чтения не было. Это не означает, что `InputStream` отмотался назад. Метод `reset()` не управляет источником данных. Он лишь возвращает позицию чтения внутри буфера к ранее установленной отметке `mark()`. Если реализация потока не поддерживает mark/reset, никакого возврата вообще не произойдет.
+
+Во время transform создается новый поток с новым содержимым. Исходный поток к этому моменту уже прочитан и больше не должен использоваться.
+
+Именно поэтому transform почти всегда имеет вид:
+
+```java
+InputStream transformed = transform(inputStream);
+```
+
+а не
+
+```java
+transform(inputStream);
+```
+
+Если метод изменяет содержимое документа, это должно быть видно уже по его сигнатуре.
 
 ### Boundary — явная граница потока
 
@@ -461,7 +544,7 @@ bis.close(); // закрывает и original
 * `BufferedInputStream` создается временно для peek;
 * `close()` вызывается в `finally` на всякий случай.
 
-**Правило:** если поток будет использоваться дальше — не закрывай обертку.
+> ⚠️ **Правило:** если поток будет использоваться дальше — не закрывай обертку.
 
 ### Использование try-with-resources не в том месте
 
@@ -482,9 +565,7 @@ try (BufferedInputStream bis = new BufferedInputStream(input)) {
 
 Код выглядит аккуратно и правильно, но логически он неверен: жизненный цикл потока контролируется не этим методом.
 
-**Rule of thumb:**
-
-> Закрывает поток тот, кто его открыл как boundary.
+> ⚠️ **Rule of thumb:** Закрывает поток тот, кто его открыл как boundary.
 
 ### Повторное использование InputStream после transform
 
@@ -501,6 +582,63 @@ use(input); // ошибка
 * старый поток может быть частично или полностью вычитан;
 * его состояние больше не определено;
 * поведение зависит от конкретной реализации.
+
+### Переприсвоение InputStream внутри метода
+
+Еще одна неочевидная ошибка связана с тем, что в Java параметры методов передаются **по значению**. Если параметром является ссылка на объект, копируется именно ссылка.
+
+Предположим, метод подготавливает поток к дальнейшей обработке:
+
+```java
+private void fillXmlParams(InputStream inputStream) {
+    inputStream = decorateInputStream(inputStream);
+
+    // дальнейшая работа...
+}
+```
+
+Внутри `decorateInputStream()` может происходить материализация:
+
+```java
+private InputStream decorateInputStream(InputStream inputStream) {
+    if (!(inputStream instanceof TempInputStream)) {
+        inputStream = CommonIOUtils.copyInputStream(inputStream);
+    }
+
+    return inputStream;
+}
+```
+
+На первый взгляд кажется, что вызывающий код теперь тоже работает с новым `TempInputStream`. На самом деле это не так.
+
+После выполнения строки:
+
+```java
+inputStream = decorateInputStream(inputStream);
+```
+
+изменяется только **локальная переменная** метода `fillXmlParams()`. Вызывающий код продолжает хранить ссылку на исходный поток.
+
+Если при создании нового потока исходный `InputStream` был полностью вычитан или закрыт, downstream позже получит уже не новый поток, а старый, находящийся в состоянии `EOF`.
+
+Исправление простое: boundary должен выполняться в том методе, который управляет дальнейшим pipeline:
+
+```java
+inputStream = decorateInputStream(inputStream);
+
+fillXmlParams(inputStream);
+fillAnotherStage(inputStream);
+
+return inputStream;
+```
+
+Либо вспомогательный метод должен явно возвращать новый поток:
+
+```java
+inputStream = prepareInputStream(inputStream);
+```
+
+а не пытаться заменить его внутри `void`-метода.
 
 ### Скрытая материализация «под капотом»
 
