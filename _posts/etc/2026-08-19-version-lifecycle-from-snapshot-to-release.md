@@ -1356,7 +1356,7 @@ See the migration guide before upgrading from v1.x.
 
 И здесь снова становится полезна структурированная история коммитов, которую мы обсуждали раньше. Если между `v0.1.0` и `v0.2.0` находятся Conventional Commits:
 
-```text id="jnsud2"
+```text
 feat: add configurable charset support
 feat: add Path API
 fix: handle overlapping placeholders
@@ -1620,7 +1620,7 @@ Build
 
 Tag сам ничего не собирает. Это всего лишь ссылка внутри истории Git. Но он позволяет точно получить исходный код, из которого должна собираться соответствующая версия. Например, через некоторое время `main` уже ушла далеко вперед:
 
-```text id="b8e3np"
+```text
 A ── B ── C ── D ── E ── F ── G ── H
                     ↑              ↑
                   v0.1.0          main
